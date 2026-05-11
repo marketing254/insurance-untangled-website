@@ -34,9 +34,9 @@ export default function DentalMarketing() {
             <h2 className="sec-title">Done-for-you digital marketing for dental practices.</h2>
             <p className="sec-sub" style={{ marginBottom: "1.75rem" }}>A dedicated strategist reviews your practice before every call — identifying what&rsquo;s working, what&rsquo;s not, and your biggest growth opportunities. You get a personalised plan, not a pitch.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "2rem" }}>
-              <div className="review-card-light"><div className="review-stars">&starf;&starf;&starf;&starf;&starf;</div><p className="review-text">&ldquo;After working with several marketing companies, we moved forward with Ekwa. I have a high standard for what I want, and I appreciate their precision and punctuality. The results were exactly what I wanted. We&rsquo;ve given them the second office to work on. I highly recommend them.&rdquo;</p><div className="review-attr">&mdash; Reina Acosta</div></div>
-              <div className="review-card-light"><div className="review-stars">&starf;&starf;&starf;&starf;&starf;</div><p className="review-text">&ldquo;My office has been using EKWA for 10 plus years and had great results as well as great customer service. They truly go above and beyond to make sure your office will succeed. We appreciate them so much and look forward to continue to grow with them.&rdquo;</p><div className="review-attr">&mdash; Brittney Price</div></div>
-              <div className="review-card-light"><div className="review-stars">&starf;&starf;&starf;&starf;&starf;</div><p className="review-text">&ldquo;Recently partnered with Ekwa after a couple years of learning through their very informative podcasts and webinars. Looking forward to experiencing growth with their team helping with SEO. Special thanks to Lana, Nithin and team for getting our new website up and running.&rdquo;</p><div className="review-attr">&mdash; Arthur Vasquez, o41 Skin Lab</div></div>
+              <div className="review-card-light"><div className="review-stars">★★★★★</div><p className="review-text">&ldquo;After working with several marketing companies, we moved forward with Ekwa. I have a high standard for what I want, and I appreciate their precision and punctuality. The results were exactly what I wanted. We&rsquo;ve given them the second office to work on. I highly recommend them.&rdquo;</p><div className="review-attr">&mdash; Reina Acosta</div></div>
+              <div className="review-card-light"><div className="review-stars">★★★★★</div><p className="review-text">&ldquo;My office has been using EKWA for 10 plus years and had great results as well as great customer service. They truly go above and beyond to make sure your office will succeed. We appreciate them so much and look forward to continue to grow with them.&rdquo;</p><div className="review-attr">&mdash; Brittney Price</div></div>
+              <div className="review-card-light"><div className="review-stars">★★★★★</div><p className="review-text">&ldquo;Recently partnered with Ekwa after a couple years of learning through their very informative podcasts and webinars. Looking forward to experiencing growth with their team helping with SEO. Special thanks to Lana, Nithin and team for getting our new website up and running.&rdquo;</p><div className="review-attr">&mdash; Arthur Vasquez, o41 Skin Lab</div></div>
             </div>
             <div className="sec-eyebrow reveal">What&rsquo;s included</div>
             <div className="marketing-features-grid">
@@ -75,7 +75,7 @@ export default function DentalMarketing() {
               />
             </div>
             <div className="scheduler-trust">
-              <div className="booking-trust-stars">&starf;&starf;&starf;&starf;&starf;</div>
+              <div className="booking-trust-stars">★★★★★</div>
               <div style={{ fontSize: "12px", color: "var(--ink-3)" }}>200+ dental practices served by Ekwa Marketing</div>
             </div>
           </div>

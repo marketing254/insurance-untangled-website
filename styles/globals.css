@@ -4647,3 +4647,8 @@ select:focus-visible {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* ── TRUST STRIP — hide dividers when row wraps on small screens ── */
+@media (max-width: 720px) {
+  .trust-strip-sep { display: none !important; }
+}

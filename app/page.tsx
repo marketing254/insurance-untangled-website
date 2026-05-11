@@ -414,88 +414,183 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Trust Badges */}
-      <section style={{ background: "var(--paper-2)", padding: "2.5rem 0", borderTop: "1px solid var(--paper-3)", borderBottom: "1px solid var(--paper-3)" }}>
-        <div className="container">
-          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <div className="sec-eyebrow" style={{ display: "inline-block" }}>Trusted by dental professionals nationwide</div>
+      {/* Trust Strip — editorial inline metrics on navy */}
+      <section
+        style={{
+          background: "linear-gradient(180deg, var(--navy-deep, #0d1a30) 0%, var(--navy) 100%)",
+          padding: "3rem 0",
+          position: "relative",
+          overflow: "hidden",
+          color: "#fff",
+        }}
+        aria-label="Trust indicators"
+      >
+        {/* Subtle teal glow accent */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: "-120px",
+            right: "-80px",
+            width: "440px",
+            height: "440px",
+            background: "radial-gradient(circle, rgba(14,165,160,.14) 0%, transparent 65%)",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="container" style={{ position: "relative", zIndex: 1 }}>
+          {/* Eyebrow */}
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: ".5rem",
+                fontFamily: "var(--mono)",
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: ".16em",
+                textTransform: "uppercase",
+                color: "var(--gold-lt)",
+              }}
+            >
+              <span style={{ width: "24px", height: "1px", background: "rgba(232,176,64,.5)", display: "inline-block" }} />
+              Trusted nationwide by dental practices
+              <span style={{ width: "24px", height: "1px", background: "rgba(232,176,64,.5)", display: "inline-block" }} />
+            </div>
           </div>
+
+          {/* Featured Google review stars */}
+          <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+            <div
+              style={{
+                fontFamily: "var(--mono)",
+                fontSize: "32px",
+                letterSpacing: "6px",
+                color: "var(--gold-lt)",
+                lineHeight: 1,
+                marginBottom: ".5rem",
+              }}
+              aria-label="4.9 out of 5 stars"
+            >
+              ★★★★★
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--mono)",
+                fontSize: "12px",
+                letterSpacing: ".1em",
+                color: "rgba(255,255,255,.6)",
+                textTransform: "uppercase",
+              }}
+            >
+              <strong style={{ color: "#fff", fontWeight: 700 }}>4.9 / 5</strong> · Google reviews from 200+ dental practices
+            </div>
+          </div>
+
+          {/* Inline stat row with vertical dividers */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: "1.25rem",
-              maxWidth: "1100px",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 0,
+              maxWidth: "1080px",
               margin: "0 auto",
+              borderTop: "1px solid rgba(255,255,255,.08)",
+              borderBottom: "1px solid rgba(255,255,255,.08)",
+              padding: "1.5rem 0",
             }}
           >
             {[
-              {
-                icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                ),
-                title: "20 Years",
-                sub: "PPO negotiation expertise",
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-                ),
-                title: "$3B+",
-                sub: "Recovered for clients",
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-                ),
-                title: "4.9 / 5",
-                sub: "Google review average",
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
-                ),
-                title: "200+",
-                sub: "Practices served",
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                ),
-                title: "GDPR / CCPA",
-                sub: "Data privacy compliant",
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                ),
-                title: "Weekly",
-                sub: "New podcast episodes",
-              },
-            ].map((badge, i) => (
+              { stat: "20", unit: "yr", label: "PPO Negotiation Expertise" },
+              { stat: "$3B", unit: "+", label: "Recovered for Clients" },
+              { stat: "137", unit: "+", label: "Podcast Episodes" },
+              { stat: "200", unit: "+", label: "Practices Served" },
+              { stat: "16", unit: "+", label: "CE-Eligible Webinars" },
+            ].map((item, i, arr) => (
               <div
                 key={i}
                 style={{
-                  background: "#fff",
-                  border: "1px solid var(--paper-3)",
-                  borderRadius: "var(--r-lg)",
-                  padding: "1.25rem 1rem",
-                  textAlign: "center",
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
-                  gap: ".5rem",
+                  flex: "1 1 180px",
+                  minWidth: 0,
                 }}
               >
-                <div style={{ width: "36px", height: "36px", color: "var(--steel)" }}>{badge.icon}</div>
-                <div style={{ fontFamily: "var(--serif)", fontSize: "1.25rem", fontWeight: 800, color: "var(--ink)", lineHeight: 1 }}>
-                  {badge.title}
+                <div style={{ flex: 1, textAlign: "center", padding: "0 1rem" }}>
+                  <div
+                    style={{
+                      fontFamily: "var(--serif)",
+                      fontSize: "clamp(1.85rem, 3.5vw, 2.5rem)",
+                      fontWeight: 900,
+                      color: "#fff",
+                      lineHeight: 1,
+                      letterSpacing: "-.02em",
+                      marginBottom: ".4rem",
+                    }}
+                  >
+                    {item.stat}
+                    <span style={{ color: "var(--gold-lt)", fontSize: ".65em", marginLeft: "1px" }}>{item.unit}</span>
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--mono)",
+                      fontSize: "10.5px",
+                      letterSpacing: ".1em",
+                      textTransform: "uppercase",
+                      color: "rgba(168,196,228,.7)",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {item.label}
+                  </div>
                 </div>
-                <div style={{ fontFamily: "var(--mono)", fontSize: "10.5px", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--ink-4)" }}>
-                  {badge.sub}
-                </div>
+                {i < arr.length - 1 && (
+                  <div
+                    aria-hidden="true"
+                    className="trust-strip-sep"
+                    style={{
+                      width: "1px",
+                      height: "44px",
+                      background: "rgba(255,255,255,.10)",
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
               </div>
             ))}
+          </div>
+
+          {/* Subtle trust footer */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "1.5rem",
+              flexWrap: "wrap",
+              marginTop: "1.75rem",
+              fontFamily: "var(--mono)",
+              fontSize: "10.5px",
+              letterSpacing: ".1em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,.4)",
+            }}
+          >
+            <span style={{ display: "inline-flex", alignItems: "center", gap: ".4rem" }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+              GDPR &amp; CCPA Compliant
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: ".4rem" }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+              Secure HTTPS · Data Encrypted
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: ".4rem" }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+              Weekly New Content
+            </span>
           </div>
         </div>
       </section>
