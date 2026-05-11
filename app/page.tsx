@@ -294,7 +294,7 @@ export default async function Home() {
               <Link href="/podcast" className="h2-btn-outline" style={{ marginTop: "1.75rem" }}>View all 137 episodes &rarr;</Link>
             </div>
             <div className="h2-ep-stack">
-              <Link href="/podcast/137-why-doing-more-isnt-the-answer-doing-the-right-things-is/" className="h2-ep" role="button" tabIndex={0}>
+              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
                 <span className="h2-ep-num">137</span>
                 <span className="h2-ep-title">Why Doing &quot;More&quot; Isn&apos;t the Answer &mdash; Doing the Right Things Is!</span>
                 <span className="h2-ep-tag">Marketing</span>

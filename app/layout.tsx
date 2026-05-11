@@ -15,13 +15,7 @@ export const metadata: Metadata = {
   description:
     "Insurance Untangled helps dentists understand, negotiate, and navigate dental PPOs with confidence. Free weekly podcast, live CE webinars, and expert fee negotiation services.",
   authors: [{ name: "Insurance Untangled" }],
-  icons: {
-    icon: [
-      { url: "/images/logo.png", type: "image/png" },
-    ],
-    apple: "/images/logo.png",
-    shortcut: "/images/logo.png",
-  },
+  // Favicons are now generated automatically by Next.js from app/icon.png + app/apple-icon.png
   openGraph: {
     type: "website",
     siteName: "Insurance Untangled",
@@ -91,12 +85,16 @@ export default function RootLayout({
             httpEquiv="Content-Security-Policy"
             content={[
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://script.google.com https://www.googletagmanager.com https://www.google-analytics.com",
+              // Apps Script JSONP redirects through script.googleusercontent.com
+              "script-src 'self' 'unsafe-inline' https://script.google.com https://script.googleusercontent.com https://*.googleusercontent.com https://www.googletagmanager.com https://www.google-analytics.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://images.unsplash.com https://i.vimeocdn.com https://www.google-analytics.com https://www.googletagmanager.com",
+              // Podcast audio served from Libsyn
+              "media-src 'self' https://traffic.libsyn.com https://*.libsyn.com https://*.libsynpro.com",
               "frame-src https://player.vimeo.com https://ekwasales-withoutceo-insuranceuntangled.youcanbook.me https://www.google.com https://us02web.zoom.us https://www.googletagmanager.com",
-              "connect-src 'self' https://script.google.com https://docs.google.com https://app.kit.com https://www.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net",
+              // Apps Script doGet returns 302 redirect to script.googleusercontent.com — must allow both
+              "connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.googleusercontent.com https://docs.google.com https://app.kit.com https://www.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self' https://script.google.com https://app.kit.com",
