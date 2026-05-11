@@ -1,37 +1,54 @@
-# ── Claude project memory ─────────────────────────────────────────
-.claude/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# ── Source / build files (not needed for deployment) ─────────────
-insurance-untangled-complete*.html
-split_pages.py
-create_webinar_spreadsheet.py
-update_spreadsheet_embeds.py
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# ── Data / docs (internal use only) ──────────────────────────────
-*.xlsx
-GITHUB-HOSTING-GUIDE.txt
+# testing
+/coverage
 
-# ── Python cache ──────────────────────────────────────────────────
-__pycache__/
-*.py[cod]
-*.pyo
+# next.js
+/.next/
+/out/
 
-# ── OS junk ───────────────────────────────────────────────────────
+# production
+/build
+
+# misc
 .DS_Store
-.DS_Store?
-._*
-Thumbs.db
-ehthumbs.db
-Desktop.ini
+*.pem
 
-# ── Editor / IDE ──────────────────────────────────────────────────
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# ── Logs & temp ───────────────────────────────────────────────────
-*.log
-*.tmp
-*.bak
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# dev server logs
+.next-dev.*
+
+# local working HTML / archive (not part of the live site)
+outputs/
+blog-doing-more-isnt-the-answer.html
+episode.html
+FULL-AUDIT-REPORT.md
+insurance-untangled-working.html
+webinar-replays.xlsx
+ACTION-PLAN.md
+.claude
