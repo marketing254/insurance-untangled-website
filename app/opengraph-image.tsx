@@ -1,5 +1,8 @@
 import { ImageResponse } from "next/og";
 
+// Required for output: "export" — pre-render this image at build time
+export const dynamic = "force-static";
+
 export const alt = "Insurance Untangled | Decoding Dental Insurance for Dentists";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
