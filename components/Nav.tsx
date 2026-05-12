@@ -4,18 +4,26 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-const NAV_ITEMS = [
+const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/about/", label: "About" },
   { href: "/podcast/", label: "Podcast" },
   { href: "/events/", label: "Events" },
   { href: "/ppo-negotiation/", label: "PPO Negotiation" },
-  { href: "/dental-marketing/", label: "Dental Marketing" },
+  { href: "/dental-marketing/", label: "Dental Marketing", cta: true },
   { href: "/blog/", label: "Blog" },
   { href: "/resources/", label: "Resources", optHide: true },
   { href: "/reviews/", label: "Reviews", optHide: true },
   { href: "/be-a-guest/", label: "Be a Guest", optHide: true, accent: true },
 ];
+
+type NavItem = {
+  href: string;
+  label: string;
+  optHide?: boolean;
+  accent?: boolean;
+  cta?: boolean;
+};
 
 export default function Nav() {
   const pathname = usePathname();
@@ -31,13 +39,25 @@ export default function Nav() {
           <ul className="fnav-links">
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+              const linkStyle: React.CSSProperties | undefined = item.cta
+                ? {
+                    background: "var(--teal)",
+                    color: "#fff",
+                    fontWeight: 700,
+                    padding: ".5rem .85rem",
+                    borderRadius: "8px",
+                    margin: "0 .15rem",
+                  }
+                : item.accent
+                ? { color: "#0EA5A0", fontWeight: 600 }
+                : undefined;
               return (
                 <li key={item.href} className={item.optHide ? "opt-hide" : undefined}>
                   <Link
                     href={item.href}
-                    className={isActive ? "active" : undefined}
+                    className={isActive && !item.cta ? "active" : undefined}
                     aria-current={isActive ? "page" : undefined}
-                    style={item.accent ? { color: "#0EA5A0", fontWeight: 600 } : undefined}
+                    style={linkStyle}
                   >
                     {item.label}
                   </Link>
@@ -93,18 +113,26 @@ export default function Nav() {
               </button>
             </div>
             <ul className="mobile-nav-links">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "active" : undefined}
-                    style={item.accent ? { color: "#0EA5A0", fontWeight: 600 } : undefined}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+                const mobileStyle: React.CSSProperties | undefined = item.cta
+                  ? { color: "var(--teal)", fontWeight: 700 }
+                  : item.accent
+                  ? { color: "#0EA5A0", fontWeight: 600 }
+                  : undefined;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={isActive ? "active" : undefined}
+                      style={mobileStyle}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
             <div className="mobile-nav-actions">
               <Link href="/ppo-scorecard/" className="btn-teal" onClick={() => setMobileOpen(false)}>

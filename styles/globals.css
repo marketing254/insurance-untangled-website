@@ -4652,3 +4652,45 @@ select:focus-visible {
 @media (max-width: 720px) {
   .trust-strip-sep { display: none !important; }
 }
+
+/* ── DENTAL MARKETING HERO — text + YCBM scheduler side-by-side ─────────── */
+.mkt-hero { padding: 3.5rem 0 4rem; }
+.mkt-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 3rem;
+  align-items: start;
+}
+.mkt-hero-left { padding-top: .5rem; }
+.mkt-hero-right { position: sticky; top: 90px; }
+.mkt-hero-trust {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+  margin-top: 1.75rem;
+}
+.mkt-hero-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,.85);
+}
+.mkt-hero-trust-item svg { color: var(--teal-lt); flex-shrink: 0; }
+.mkt-hero-mobile-cta { display: none; margin-top: 1.5rem; text-align: center; }
+
+/* Tablet — narrower scheduler column */
+@media (max-width: 1100px) {
+  .mkt-hero-grid { grid-template-columns: 1fr 400px; gap: 2rem; }
+  .mkt-hero-right { position: static; }
+}
+
+/* Mobile — stack, hide sticky calendar from hero, show mobile CTA */
+@media (max-width: 860px) {
+  .mkt-hero { padding: 2.5rem 0 1rem; }
+  .mkt-hero-grid { grid-template-columns: 1fr; gap: 0; }
+  .mkt-hero-right { margin-top: 2rem; }
+  .mkt-hero-mobile-cta { display: block; }
+  .mkt-hero-trust { margin-top: 1.25rem; }
+}
