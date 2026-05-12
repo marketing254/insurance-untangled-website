@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import YCBMScheduler from "@/components/YCBMScheduler";
 
 export const metadata: Metadata = {
   title: "Dental Marketing by Ekwa Marketing",
@@ -65,22 +66,7 @@ export default function DentalMarketing() {
                   <div className="booking-panel-title">Book a Marketing Strategy Meeting</div>
                   <div className="booking-panel-sub">Pick a date and time that works for you.</div>
                 </div>
-                <div className="scheduler-embed-wrap">
-                  <iframe
-                    src="https://ekwasales-withoutceo-insuranceuntangled.youcanbook.me/?noframe=true&skipHeaderFooter=true"
-                    id="ycbmiframeekwasales-withoutceo-insuranceuntangled"
-                    style={{
-                      width: "100%",
-                      height: "640px",
-                      border: "none",
-                      background: "transparent",
-                      borderRadius: "0 0 12px 12px",
-                      display: "block",
-                    }}
-                    loading="lazy"
-                    title="Book a Marketing Strategy Meeting"
-                  />
-                </div>
+                <YCBMScheduler height={640} title="Book a Marketing Strategy Meeting" />
               </div>
             </div>
 

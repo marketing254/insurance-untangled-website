@@ -94,7 +94,7 @@ export default function RootLayout({
               "media-src 'self' https://traffic.libsyn.com https://*.libsyn.com https://*.libsynpro.com",
               "frame-src https://player.vimeo.com https://ekwasales-withoutceo-insuranceuntangled.youcanbook.me https://www.google.com https://us02web.zoom.us https://www.googletagmanager.com",
               // Apps Script doGet returns 302 redirect to script.googleusercontent.com — must allow both
-              "connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.googleusercontent.com https://docs.google.com https://app.kit.com https://www.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net",
+              "connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.googleusercontent.com https://docs.google.com https://app.kit.com https://www.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net https://*.youcanbook.me",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self' https://script.google.com https://app.kit.com",
