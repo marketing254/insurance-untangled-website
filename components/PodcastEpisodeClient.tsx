@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { fetchSheetClient } from "@/lib/sheets-client";
-import { driveImageUrl } from "@/lib/sheets";
 import { buildPodcastTranscript, type PodcastTranscript } from "@/lib/transcripts";
 
 const GATE_KEY = "iu_podcast_unlocked";
@@ -552,16 +551,6 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
                 )}
               </div>
 
-              {episode.poster_image && (
-                <div style={{ marginBottom: "2.5rem", borderRadius: "var(--r-lg)", overflow: "hidden", border: "1px solid var(--paper-3)" }}>
-                  <img
-                    src={driveImageUrl(episode.poster_image, 1200)}
-                    alt={`Episode ${episode.episode}: ${episode.title}`}
-                    style={{ width: "100%", height: "auto", display: "block" }}
-                    loading="lazy"
-                  />
-                </div>
-              )}
             </div>
 
             <div style={{ position: "sticky", top: "100px" }}>
