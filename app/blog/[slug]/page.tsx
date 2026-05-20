@@ -192,7 +192,10 @@ export default async function BlogPostPage({ params }: Props) {
                 height: 60,
               },
             },
-            mainEntityOfPage: `https://www.insuranceuntangled.com/blog/${slug}/`,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://www.insuranceuntangled.com/blog/${slug}/`,
+            },
           }),
         }}
       />

@@ -3,7 +3,7 @@ import { getUpcomingEvents, getWebinars } from "@/lib/sheets";
 import { UpcomingEvents, WebinarReplays } from "@/components/EventsList";
 
 export const metadata: Metadata = {
-  title: "Events & Webinar Replays",
+  title: { absolute: "Dental Insurance Webinars & CE Events | Insurance Untangled" },
   description:
     "Live answers to the questions your insurance rep won't answer. Free CE webinars, expert panels, and full replay archive for dental professionals.",
   alternates: { canonical: "https://www.insuranceuntangled.com/events/" },
@@ -26,7 +26,8 @@ export default async function EventsPage() {
         "@type": "Event",
         name: e.title,
         startDate: e.date_iso,
-        endDate: e.date_iso, // same-day event; CE webinars are typically 60–90 min
+        // endDate omitted intentionally — same-day event, no exact end time stored.
+        // Schema.org rejects endDate === startDate as zero-duration.
         description: e.description || "Free live CE-eligible dental insurance webinar with expert panel and Q&A.",
         eventStatus: "https://schema.org/EventScheduled",
         eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",

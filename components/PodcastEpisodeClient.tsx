@@ -4,12 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
+import { driveImageUrl } from "@/lib/sheets";
 import { buildPodcastTranscript, type PodcastTranscript } from "@/lib/transcripts";
 
 const GATE_KEY = "iu_podcast_unlocked";
 
 const TRANSCRIPT_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbyQYiQ18Iw1tsSibabGYqmfRhSvplUBbLCi7aICxDPGzNrE6stcv_LdOOkmVLa8DpPtlw/exec";
+  "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
 
 type Episode = {
   episode: string;
@@ -424,7 +425,7 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
               {episode.poster_image && (
                 <div style={{ marginBottom: "2.5rem", borderRadius: "var(--r-lg)", overflow: "hidden", border: "1px solid var(--paper-3)" }}>
                   <img
-                    src={episode.poster_image}
+                    src={driveImageUrl(episode.poster_image, 1200)}
                     alt={`Episode ${episode.episode}: ${episode.title}`}
                     style={{ width: "100%", height: "auto", display: "block" }}
                     loading="lazy"

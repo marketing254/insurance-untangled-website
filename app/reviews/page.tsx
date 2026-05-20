@@ -4,13 +4,13 @@ import { getReviews } from "@/lib/sheets";
 import ReviewGrid from "@/components/ReviewGrid";
 
 export const metadata: Metadata = {
-  title: "Reviews & Testimonials",
+  title: { absolute: "Dental Practice Reviews & Testimonials | Insurance Untangled" },
   description:
-    "See what dentists say about Insurance Untangled's PPO negotiation services and dental marketing. 500+ practices served with a 4.9/5 average rating.",
+    "See what dentists say about Insurance Untangled's PPO negotiation and dental marketing services. 200+ practices served with a 4.9/5 average rating.",
   alternates: { canonical: "https://www.insuranceuntangled.com/reviews/" },
   openGraph: {
     title: "Reviews & Testimonials | Insurance Untangled",
-    description: "500+ practices served. See what dentists say about our PPO negotiation and marketing services.",
+    description: "200+ practices served. See what dentists say about our PPO negotiation and marketing services.",
     url: "https://www.insuranceuntangled.com/reviews/",
   },
 };
@@ -48,7 +48,7 @@ export default async function ReviewsPage() {
               ))}
             </div>
             <span style={{ color: "rgba(255,255,255,.7)", fontSize: "14px" }}>
-              4.9/5 average &bull; 500+ practices served
+              4.9/5 average &bull; 200+ practices served
             </span>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default async function ReviewsPage() {
               Ready to add your own review?
             </h3>
             <p style={{ fontSize: "14px", color: "var(--ink-3)", marginBottom: "1.5rem" }}>
-              Join 500+ dentists who trust Insurance Untangled for PPO strategy and practice growth.
+              Join 200+ dentists who trust Insurance Untangled for PPO strategy and practice growth.
             </p>
             <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
               <Link href="/contact/" className="btn-primary">
@@ -87,36 +87,51 @@ export default async function ReviewsPage() {
         </div>
       </section>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            name: "Insurance Untangled",
-            url: "https://www.insuranceuntangled.com",
-            aggregateRating: {
-              "@type": "AggregateRating",
-              ratingValue: "4.9",
-              bestRating: "5",
-              ratingCount: reviews.length.toString(),
-              reviewCount: reviews.length.toString(),
-            },
-            review: reviews.slice(0, 10).map((r) => ({
-              "@type": "Review",
-              reviewRating: {
-                "@type": "Rating",
-                ratingValue: r.rating || "5",
-                bestRating: "5",
+      {/* AggregateRating + Reviews — only emit if we actually have reviews
+          to satisfy Google's structured-data validator (ratingCount >= 1). */}
+      {reviews.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Insurance Untangled",
+              url: "https://www.insuranceuntangled.com",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "303 Pinetree Way",
+                addressLocality: "Mississauga",
+                addressRegion: "Ontario",
+                postalCode: "L5G 2R4",
+                addressCountry: "CA",
               },
-              author: { "@type": "Person", name: r.reviewer_name },
-              reviewBody: r.review_text,
-              ...(r.date && { datePublished: r.date }),
-              publisher: { "@type": "Organization", name: r.platform || "Google" },
-            })),
-          }),
-        }}
-      />
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "4.9",
+                bestRating: "5",
+                ratingCount: reviews.length.toString(),
+                reviewCount: reviews.length.toString(),
+              },
+              review: reviews.slice(0, 10).map((r) => ({
+                "@type": "Review",
+                itemReviewed: {
+                  "@type": "Organization",
+                  name: "Insurance Untangled",
+                },
+                reviewRating: {
+                  "@type": "Rating",
+                  ratingValue: r.rating || "5",
+                  bestRating: "5",
+                },
+                author: { "@type": "Person", name: r.reviewer_name },
+                reviewBody: r.review_text,
+                ...(r.date && { datePublished: r.date }),
+              })),
+            }),
+          }}
+        />
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

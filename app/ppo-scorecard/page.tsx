@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ScorecardClient from "./ScorecardClient";
 
 export const metadata: Metadata = {
-  title: "PPO Readiness Scorecard",
+  title: { absolute: "Free PPO Readiness Scorecard for Dental Practices | Insurance Untangled" },
   description:
     "Take our free 2-minute PPO Readiness Scorecard and discover exactly where your dental practice stands with insurance management. Get personalized recommendations.",
   alternates: { canonical: "https://www.insuranceuntangled.com/ppo-scorecard/" },
@@ -26,7 +26,7 @@ export default function PPOScorecardPage() {
             description: "Free 2-minute assessment for dental practices. Answer 10 yes/no questions and receive a personalised score across 6 PPO readiness dimensions plus episode recommendations.",
             url: "https://www.insuranceuntangled.com/ppo-scorecard/",
             applicationCategory: "BusinessApplication",
-            operatingSystem: "Web",
+            operatingSystem: "Any",
             offers: {
               "@type": "Offer",
               price: "0",

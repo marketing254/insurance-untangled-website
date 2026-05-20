@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "FAQ — Frequently Asked Questions",
+  title: { absolute: "Dental Insurance FAQ | Insurance Untangled" },
   description:
     "Answers to the most common questions about Insurance Untangled, the podcast, PPO negotiation services, dental marketing, CE webinars, and the PPO Readiness Scorecard.",
   alternates: { canonical: "https://www.insuranceuntangled.com/faq/" },

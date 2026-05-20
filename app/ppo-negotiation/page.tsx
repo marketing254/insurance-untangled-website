@@ -28,11 +28,16 @@ export default function PPONegotiation() {
             },
             areaServed: { "@type": "Country", name: "United States" },
             audience: { "@type": "Audience", audienceType: "Dental Practices" },
+            // The initial assessment is free; the negotiation service itself is performance-based
+            // (you pay only if rates improve). Pricing isn't a fixed amount, so emit AggregateOffer
+            // semantics without a misleading `price: "0"` claim.
             offers: {
               "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
-              description: "Free initial assessment. Fee-based only if reimbursement rates improve.",
+              priceSpecification: {
+                "@type": "PriceSpecification",
+                description: "Performance-based — clients pay only if reimbursement rates improve. Initial assessment is free.",
+              },
+              availability: "https://schema.org/InStock",
               url: "https://veritasdentalresources.com/book-consultation",
             },
           }),
@@ -93,7 +98,7 @@ export default function PPONegotiation() {
               <p className="page-sub">Most dentists don&rsquo;t know what their fee schedules should be &mdash; or how to push back. Veritas Dental Resources handles every negotiation for you, in a way that costs less than doing it yourself.</p>
               <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "2rem" }}>
                 <a href="https://veritasdentalresources.com/book-consultation" target="_blank" rel="noopener noreferrer" className="btn-primary">Schedule a Free Call &rarr;</a>
-                <Link href="/about" className="btn-outline-light">Meet Ben Tuinei</Link>
+                <Link href="/about/" className="btn-outline-light">Meet Ben Tuinei</Link>
               </div>
               <div className="ppo-steps" style={{ marginTop: "2.5rem" }}>
                 <div className="ppo-step"><div className="ppo-step-num">01</div><div><div className="ppo-step-title">We analyze your current fee schedules</div><div className="ppo-step-desc">Free initial assessment of where you stand versus what you could be earning.</div></div></div>

@@ -19,6 +19,7 @@ export default function About() {
             "@graph": [
               {
                 "@type": "Person",
+                "@id": "https://www.insuranceuntangled.com/about/#ben-tuinei",
                 name: "Benjamin Tuinei",
                 alternateName: "Ben Tuinei",
                 jobTitle: "President, Veritas Dental Resources",
@@ -31,6 +32,7 @@ export default function About() {
               },
               {
                 "@type": "Person",
+                "@id": "https://www.insuranceuntangled.com/about/#naren-arulrajah",
                 name: "Naren Arulrajah",
                 jobTitle: "CEO & Founder, Ekwa Marketing",
                 description: "Naren Arulrajah is the CEO and Founder of Ekwa Marketing and co-founder of Insurance Untangled. He has spent 15+ years helping dental practices grow through digital marketing, serving over 200 practices. His expertise spans dental patient acquisition, SEO, and practice growth strategy for independent dental professionals.",
@@ -69,7 +71,7 @@ export default function About() {
                 </div>
                 <p className="founder-bio-text">Naren Arulrajah is a self-described &ldquo;serial entrepreneur&rdquo; who has spent his career empowering independent professionals &mdash; dentists, doctors, lawyers, and consultants &mdash; to achieve real practice success through smarter digital marketing. As the visionary founder and CEO of Ekwa Marketing, he leads a global team of experts serving over 200 clients at every stage of practice growth.</p>
                 <div className="founder-quote">&ldquo;I consider myself an Imagineer on a mission to deliver out-of-the-box digital marketing solutions for doctors, which others are not even contemplating.&rdquo;</div>
-                <Link href="/dental-marketing" className="btn-outline">About Ekwa Marketing &rarr;</Link>
+                <Link href="/dental-marketing/" className="btn-outline">About Ekwa Marketing &rarr;</Link>
               </div>
             </div>
             <div className="founder-bio-card reveal-scale">
@@ -97,7 +99,7 @@ export default function About() {
             <div className="sec-eyebrow reveal">Our mission</div>
             <h2 className="sec-title">Untangling dental insurance for every practice.</h2>
             <p style={{ fontSize: "15.5px", color: "rgba(255,255,255,.68)", lineHeight: 1.8, margin: "1rem 0 2.5rem" }}>Insurance Untangled exists because dental insurance is genuinely complicated &mdash; and nobody teaches dentists how to navigate it. From understanding your fee schedules to negotiating with carriers to knowing when a claim denial is worth fighting, the system is designed to be opaque. We cut through that. Every week, for free.</p>
-            <Link href="/podcast" className="btn-primary">Start with the podcast &rarr;</Link>
+            <Link href="/podcast/" className="btn-primary">Start with the podcast &rarr;</Link>
           </div>
         </div>
       </div>
@@ -158,7 +160,7 @@ export default function About() {
           <h2 className="sec-title">Keep learning for free.</h2>
           <p className="sec-sub">Three ways to stay ahead of insurance changes and grow your practice knowledge at no cost.</p>
           <div className="stay-updated-grid">
-            <Link href="/podcast" className="su-card">
+            <Link href="/podcast/" className="su-card">
               <div className="su-icon-wrap"><svg className="su-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg></div>
               <div className="su-title">Listen to the Podcast</div>
               <p className="su-desc">Weekly episodes on dental insurance strategy, PPO negotiation, and practice growth.</p>
@@ -173,7 +175,7 @@ export default function About() {
               <div className="su-title">Read the Blog</div>
               <p className="su-desc">Strategy articles and plain-English guides on dental PPO negotiation and practice growth.</p>
             </Link>
-            <Link href="/contact" className="su-card">
+            <Link href="/contact/" className="su-card">
               <div className="su-icon-wrap"><svg className="su-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg></div>
               <div className="su-title">Get in Touch</div>
               <p className="su-desc">Questions about insurance strategy, marketing, or partnerships? We respond within 1 business day.</p>

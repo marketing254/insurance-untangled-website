@@ -142,7 +142,7 @@ export default function PopupBanner() {
             </div>
           </div>
           <Link
-            href="/ppo-scorecard"
+            href="/ppo-scorecard/"
             onClick={dismiss}
             style={{
               display: "block",

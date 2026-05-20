@@ -197,5 +197,51 @@ export function webinarSlug(webinar: Webinar): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
     .slice(0, 60);
-  return titleSlug;
+  // Prefix with date to guarantee uniqueness — two webinars with similar titles
+  // would otherwise collide and 404. Falls back to title-only if date missing.
+  const date = (webinar.date_iso || '').trim();
+  return date ? `${date}-${titleSlug}` : titleSlug;
+}
+
+// ── Utility: Convert Google Drive share URLs to direct image CDN URLs ────────
+// Drive sharing URLs like https://drive.google.com/file/d/{FILE_ID}/view?...
+// serve an HTML page, not the image. To embed in <img src>, we extract the
+// file ID and rewrite to https://lh3.googleusercontent.com/d/{FILE_ID}, which
+// is the actual Google image CDN (fast, supports sizing).
+//
+// Pass-through behavior: any non-Drive URL is returned unchanged.
+//
+// Recognised Drive URL patterns:
+//   https://drive.google.com/file/d/{ID}/view
+//   https://drive.google.com/file/d/{ID}/view?usp=sharing
+//   https://drive.google.com/open?id={ID}
+//   https://drive.google.com/uc?id={ID}
+//   https://drive.google.com/uc?export=view&id={ID}
+//   https://drive.google.com/thumbnail?id={ID}
+export function driveImageUrl(url: string, sizePx: number = 1200): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+
+  // Already a googleusercontent CDN URL — pass through
+  if (trimmed.includes('googleusercontent.com')) return trimmed;
+
+  // Not a Drive URL — return unchanged
+  if (!trimmed.includes('drive.google.com')) return trimmed;
+
+  // Extract file ID from any of the recognised patterns
+  const patterns = [
+    /\/file\/d\/([\w-]{20,})/,        // /file/d/ID/view
+    /[?&]id=([\w-]{20,})/,             // ?id=ID or &id=ID
+    /\/d\/([\w-]{20,})/,               // generic /d/ID
+  ];
+  let id = '';
+  for (const p of patterns) {
+    const m = trimmed.match(p);
+    if (m) { id = m[1]; break; }
+  }
+  if (!id) return trimmed; // unknown Drive URL — leave as-is rather than break
+
+  // Use lh3.googleusercontent.com — direct CDN, supports =wN-hN sizing params
+  return `https://lh3.googleusercontent.com/d/${id}=w${sizePx}`;
 }

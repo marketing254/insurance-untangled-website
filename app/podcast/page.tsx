@@ -4,12 +4,13 @@ import { getPodcasts, podcastSlug } from "@/lib/sheets";
 import PodcastGrid from "@/components/PodcastGrid";
 
 export const metadata: Metadata = {
-  title: "Insurance Untangled Podcast — Dental PPO Strategy & Fee Negotiation",
+  // Override the global template — title is brand-led already, no need to append " | Insurance Untangled"
+  title: { absolute: "Dental Insurance Podcast — PPO Strategy & Fee Negotiation" },
   description:
-    "137+ expert conversations decoding PPO contracts, fee negotiations, claim strategy, and the business realities of modern dentistry. New episodes every week, free forever.",
+    "137+ expert conversations decoding PPO contracts, fee negotiations, claim strategy, and the business realities of modern dentistry. New episodes weekly.",
   alternates: { canonical: "https://www.insuranceuntangled.com/podcast/" },
   openGraph: {
-    title: "Insurance Untangled Podcast — Dental PPO Strategy & Fee Negotiation",
+    title: "Dental Insurance Podcast — PPO Strategy & Fee Negotiation",
     description: "Expert conversations decoding dental insurance — PPO strategy, fee negotiation, and marketing for dentists.",
     url: "https://www.insuranceuntangled.com/podcast/",
   },
@@ -28,6 +29,7 @@ export default async function PodcastPage() {
     itemListElement: episodes.slice(0, 50).map((ep, i) => ({
       "@type": "ListItem",
       position: i + 1,
+      name: `Ep ${ep.episode}: ${ep.title}`,
       url: `https://www.insuranceuntangled.com/podcast/${podcastSlug(ep)}/`,
     })),
   };

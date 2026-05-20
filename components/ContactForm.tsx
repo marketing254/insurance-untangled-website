@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbyQYiQ18Iw1tsSibabGYqmfRhSvplUBbLCi7aICxDPGzNrE6stcv_LdOOkmVLa8DpPtlw/exec";
+const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
 
 export default function ContactForm() {
   const [submitting, setSubmitting] = useState(false);

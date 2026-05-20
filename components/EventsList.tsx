@@ -4,9 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
+import { driveImageUrl } from "@/lib/sheets";
 
 const GATE_KEY = "iu_podcast_unlocked";
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQYiQ18Iw1tsSibabGYqmfRhSvplUBbLCi7aICxDPGzNrE6stcv_LdOOkmVLa8DpPtlw/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
 
 // Shared inline gate form for webinar cards
 function WebinarGateForm({ title, onUnlock }: { title: string; onUnlock: () => void }) {
@@ -238,7 +239,7 @@ export function WebinarReplays({ initialWebinars }: { initialWebinars: WebinarRo
   const thumbContent = (w: WebinarRow, grad: string) => (
     <>
       {w.image_url ? (
-        <div className="replay-thumb-bg" style={{ backgroundImage: `url('${w.image_url}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
+        <div className="replay-thumb-bg" style={{ backgroundImage: `url('${driveImageUrl(w.image_url, 800)}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
       ) : (
         <>
           <div className="replay-thumb-bg" style={{ background: grad }} />

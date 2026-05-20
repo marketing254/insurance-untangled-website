@@ -89,7 +89,7 @@ export default function RootLayout({
               "script-src 'self' 'unsafe-inline' https://script.google.com https://script.googleusercontent.com https://*.googleusercontent.com https://www.googletagmanager.com https://www.google-analytics.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://images.unsplash.com https://i.vimeocdn.com https://www.google-analytics.com https://www.googletagmanager.com",
+              "img-src 'self' data: blob: https://images.unsplash.com https://i.vimeocdn.com https://www.google-analytics.com https://www.googletagmanager.com https://lh3.googleusercontent.com https://*.googleusercontent.com https://drive.google.com",
               // Podcast audio served from Libsyn
               "media-src 'self' https://traffic.libsyn.com https://*.libsyn.com https://*.libsynpro.com",
               "frame-src https://player.vimeo.com https://ekwasales-withoutceo-insuranceuntangled.youcanbook.me https://www.google.com https://us02web.zoom.us https://www.googletagmanager.com",
@@ -128,7 +128,12 @@ export default function RootLayout({
               "@type": "Organization",
               name: "Insurance Untangled",
               url: "https://www.insuranceuntangled.com",
-              logo: "https://www.insuranceuntangled.com/images/logo.png",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://www.insuranceuntangled.com/images/logo.png",
+                width: 462,
+                height: 340,
+              },
               description:
                 "Helping dentists understand, negotiate, and navigate dental PPOs with confidence — through the podcast, live webinars, and expert resources.",
               foundingDate: "2023-01-01",
@@ -180,7 +185,12 @@ export default function RootLayout({
               name: "Insurance Untangled",
               description: "Expert conversations on PPO strategy, dental marketing, fee negotiation, and building a practice with less insurance dependency.",
               url: "https://www.insuranceuntangled.com/podcast/",
-              image: "https://www.insuranceuntangled.com/images/logo.png",
+              image: {
+                "@type": "ImageObject",
+                url: "https://www.insuranceuntangled.com/images/logo.png",
+                width: 462,
+                height: 340,
+              },
               webFeed: "https://feeds.libsyn.com/insurance-untangled",
               author: { "@type": "Organization", name: "Insurance Untangled" },
               publisher: { "@type": "Organization", name: "Insurance Untangled" },
@@ -197,7 +207,10 @@ export default function RootLayout({
               url: "https://www.insuranceuntangled.com",
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://www.insuranceuntangled.com/podcast/?s={search_term_string}",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://www.insuranceuntangled.com/podcast/?s={search_term_string}",
+                },
                 "query-input": "required name=search_term_string",
               },
             }),

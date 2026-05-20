@@ -31,11 +31,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // /thank-you/ intentionally excluded — noindex page, post-conversion only
   ];
 
-  // Dynamic podcast episode pages
+  // Dynamic podcast episode pages — date_iso is `dd-mm-yyyy` per the Sheet column
+  const parseDdMmYyyy = (raw: string): Date => {
+    const parts = (raw || "").trim().split(/[-/]/);
+    if (parts.length === 3 && parts[2].length === 4) {
+      return new Date(`${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`);
+    }
+    return new Date();
+  };
   const podcasts = await getPodcasts();
   const podcastPages = podcasts.filter((ep) => ep.episode).map((ep) => ({
     url: `${baseUrl}/podcast/${podcastSlug(ep)}/`,
-    lastModified: new Date(),
+    lastModified: ep.date_iso ? parseDdMmYyyy(ep.date_iso) : new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));

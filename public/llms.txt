@@ -25,6 +25,8 @@ Insurance Untangled helps independent dental practices understand, negotiate, an
 - https://www.insuranceuntangled.com/about/ — About the founders and team
 - https://www.insuranceuntangled.com/reviews/ — Client reviews and testimonials
 - https://www.insuranceuntangled.com/partners/ — Partner directory
+- https://www.insuranceuntangled.com/contact/ — Contact page (email, phone, contact form)
+- https://www.insuranceuntangled.com/be-a-guest/ — Application to appear as a podcast guest
 
 ## Legal & Privacy
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getWebinars, getUpcomingEvents, webinarSlug } from "@/lib/sheets";
+import { getWebinars, getUpcomingEvents, webinarSlug, driveImageUrl } from "@/lib/sheets";
 import WebinarGate from "@/components/WebinarGate";
 
 type Props = {
@@ -95,25 +95,31 @@ export default async function ReplayPage({ params }: Props) {
     ],
   };
 
-  const videoSchema = {
+  // VideoObject — only emit if we have the minimum required props (uploadDate +
+  // a real video thumbnail, not a logo fallback) for valid rich result eligibility.
+  const validThumbnail = webinar.image_url ? driveImageUrl(webinar.image_url, 1200) : null;
+  const videoSchema = (webinar.date_iso && validThumbnail) ? {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: webinar.title,
     description: notes.join(" ").slice(0, 500) || `Watch the replay of ${webinar.title}`,
     uploadDate: webinar.date_iso,
-    embedUrl: webinar.webinar_url,
-    thumbnailUrl: webinar.image_url || "https://www.insuranceuntangled.com/images/logo.png",
+    // Use Vimeo player embed URL (not the watch-page URL) for valid embedUrl
+    embedUrl: vid ? `https://player.vimeo.com/video/${vid}` : webinar.webinar_url,
+    thumbnailUrl: validThumbnail,
     publisher: {
       "@type": "Organization",
       name: "Insurance Untangled",
       url: "https://www.insuranceuntangled.com",
     },
-  };
+  } : null;
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }} />
+      {videoSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }} />
+      )}
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <div className="r-hero">

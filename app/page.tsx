@@ -7,7 +7,7 @@ import { getUpcomingEvents } from "@/lib/sheets";
 export const metadata: Metadata = {
   title: "Dental Insurance Strategy for Dental Practices",
   description:
-    "Insurance Untangled cuts through the confusion of dental PPOs - helping dentists negotiate better reimbursements, understand their plans, and build a practice that works with insurance.",
+    "Insurance Untangled cuts through the confusion of dental PPOs — helping dentists negotiate better reimbursements and build a practice that works with insurance.",
   alternates: { canonical: "https://www.insuranceuntangled.com/" },
 };
 
@@ -44,8 +44,8 @@ export default async function Home() {
             </h1>
             <p className="h2-hero-sub reveal reveal-d1">Insurance Untangled cuts through the confusion of dental PPOs &mdash; helping dentists negotiate better reimbursements, understand their plans, and build a practice that works with insurance rather than against it.</p>
             <div className="h2-hero-actions reveal reveal-d2">
-              <Link href="/dental-marketing" className="h2-btn-primary">Book Free Marketing Consult</Link>
-              <Link href="/podcast" className="h2-btn-ghost-hero">
+              <Link href="/dental-marketing/" className="h2-btn-primary">Book Free Marketing Consult</Link>
+              <Link href="/podcast/" className="h2-btn-ghost-hero">
                 Browse 137 episodes
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
@@ -163,7 +163,7 @@ export default async function Home() {
           </div>
           <div className="h2-offer-grid reveal">
 
-            <Link href="/podcast" className="h2-offer h2-offer-featured h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=900&q=70&auto=format&fit=crop')" }}>
+            <Link href="/podcast/" className="h2-offer h2-offer-featured h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=900&q=70&auto=format&fit=crop')" }}>
               <div className="h2-offer-num">01</div>
               <div className="h2-offer-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" /></svg>
@@ -175,7 +175,7 @@ export default async function Home() {
               </div>
             </Link>
 
-            <Link href="/ppo-negotiation" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&q=70&auto=format&fit=crop')" }}>
+            <Link href="/ppo-negotiation/" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&q=70&auto=format&fit=crop')" }}>
               <div className="h2-offer-num">02</div>
               <div className="h2-offer-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
@@ -187,7 +187,7 @@ export default async function Home() {
               </div>
             </Link>
 
-            <Link href="/dental-marketing" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=70&auto=format&fit=crop')" }}>
+            <Link href="/dental-marketing/" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=70&auto=format&fit=crop')" }}>
               <div className="h2-offer-num">03</div>
               <div className="h2-offer-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /><line x1="2" y1="20" x2="22" y2="20" /></svg>
@@ -199,7 +199,7 @@ export default async function Home() {
               </div>
             </Link>
 
-            <Link href="/events" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=900&q=70&auto=format&fit=crop')" }}>
+            <Link href="/events/" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=900&q=70&auto=format&fit=crop')" }}>
               <div className="h2-offer-num">04</div>
               <div className="h2-offer-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
@@ -291,7 +291,7 @@ export default async function Home() {
                   YouTube
                 </a>
               </div>
-              <Link href="/podcast" className="h2-btn-outline" style={{ marginTop: "1.75rem" }}>View all 137 episodes &rarr;</Link>
+              <Link href="/podcast/" className="h2-btn-outline" style={{ marginTop: "1.75rem" }}>View all 137 episodes &rarr;</Link>
             </div>
             <div className="h2-ep-stack">
               <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
@@ -299,22 +299,22 @@ export default async function Home() {
                 <span className="h2-ep-title">Why Doing &quot;More&quot; Isn&apos;t the Answer &mdash; Doing the Right Things Is!</span>
                 <span className="h2-ep-tag">Marketing</span>
               </Link>
-              <Link href="/podcast" className="h2-ep" role="button" tabIndex={0}>
+              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
                 <span className="h2-ep-num">136</span>
                 <span className="h2-ep-title">Are Out-of-Network Benefits Getting Better or Worse?</span>
                 <span className="h2-ep-tag">Negotiating</span>
               </Link>
-              <Link href="/podcast" className="h2-ep" role="button" tabIndex={0}>
+              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
                 <span className="h2-ep-num">135</span>
                 <span className="h2-ep-title">Why Your Schedule Controls You and How to Change That</span>
                 <span className="h2-ep-tag">Marketing</span>
               </Link>
-              <Link href="/podcast" className="h2-ep" role="button" tabIndex={0}>
+              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
                 <span className="h2-ep-num">134</span>
                 <span className="h2-ep-title">What Google Really Wants From Your Dental Website in 2026</span>
                 <span className="h2-ep-tag">Marketing</span>
               </Link>
-              <Link href="/podcast" className="h2-ep" role="button" tabIndex={0}>
+              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
                 <span className="h2-ep-num">133</span>
                 <span className="h2-ep-title">Creating a PPO Exit Strategy for Your Dental Practice</span>
                 <span className="h2-ep-tag">Negotiating</span>
@@ -335,7 +335,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="h2-founders-grid reveal">
-            <Link href="/about" className="h2-founder reveal-d1" role="button" tabIndex={0}>
+            <Link href="/about/" className="h2-founder reveal-d1" role="button" tabIndex={0}>
               <img src="/images/naren-founder.jpg" alt="Naren Arulrajah" className="h2-founder-photo" loading="lazy" />
               <div className="h2-founder-body">
                 <div className="h2-founder-name">Naren Arulrajah</div>
@@ -344,7 +344,7 @@ export default async function Home() {
                 <div className="h2-founder-badge">200+ practices served</div>
               </div>
             </Link>
-            <Link href="/about" className="h2-founder reveal-d2" role="button" tabIndex={0}>
+            <Link href="/about/" className="h2-founder reveal-d2" role="button" tabIndex={0}>
               <img src="/images/ben-founder.jpg" alt="Ben Tuinei" className="h2-founder-photo" loading="lazy" />
               <div className="h2-founder-body">
                 <div className="h2-founder-name">Ben Tuinei</div>
@@ -403,13 +403,13 @@ export default async function Home() {
             </article>
           </div>
           <div style={{ textAlign: "center", marginTop: "2rem" }} className="reveal">
-            <Link href="/dental-marketing" className="btn-primary" style={{ display: "inline-block", fontSize: ".95rem", padding: ".85rem 2rem" }}>Book a Strategy Meeting &rarr;</Link>
+            <Link href="/dental-marketing/" className="btn-primary" style={{ display: "inline-block", fontSize: ".95rem", padding: ".85rem 2rem" }}>Book a Strategy Meeting &rarr;</Link>
           </div>
           <div className="h2-review-trust reveal" style={{ marginTop: "1.5rem" }}>
             <span className="h2-review-trust-stars" aria-hidden="true">★★★★★</span>
             <span><strong>Trusted</strong> by independent dental practices nationwide</span>
             <span className="h2-review-trust-sep" aria-hidden="true"></span>
-            <span>Listen to full stories on <Link href="/podcast" style={{ color: "var(--navy)", fontWeight: 600, textDecoration: "none", borderBottom: "1px solid var(--paper-3)" }}>the podcast &rarr;</Link></span>
+            <span>Listen to full stories on <Link href="/podcast/" style={{ color: "var(--navy)", fontWeight: 600, textDecoration: "none", borderBottom: "1px solid var(--paper-3)" }}>the podcast &rarr;</Link></span>
           </div>
         </div>
       </section>
@@ -632,7 +632,7 @@ export default async function Home() {
                 {nextEvent?.register_url ? (
                   <a href={nextEvent.register_url} target="_blank" rel="noopener noreferrer" className="h2-btn-primary">Reserve Your Spot &rarr;</a>
                 ) : (
-                  <Link href="/events" className="h2-btn-primary">Browse Events &rarr;</Link>
+                  <Link href="/events/" className="h2-btn-primary">Browse Events &rarr;</Link>
                 )}
               </div>
               <div className="h2-webinar-right">
@@ -687,7 +687,7 @@ export default async function Home() {
               <p style={{ fontSize: "15.5px", color: "var(--ink-3)", maxWidth: "500px" }}>Book a free consultation with Ekwa Marketing and get a clear picture of where your practice stands &mdash; and what steps will make the biggest difference.</p>
             </div>
             <div className="h2-cta-action reveal-right">
-              <Link href="/dental-marketing" className="h2-btn-primary h2-btn-xl">Book Your Free Consultation &rarr;</Link>
+              <Link href="/dental-marketing/" className="h2-btn-primary h2-btn-xl">Book Your Free Consultation &rarr;</Link>
               <Link href="/ppo-scorecard/" className="h2-btn-ghost" style={{ marginTop: ".75rem", fontSize: "13px", justifyContent: "center" }}>
                 Or take the free PPO Readiness Scorecard first &rarr;
               </Link>

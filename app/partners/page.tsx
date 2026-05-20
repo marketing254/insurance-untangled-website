@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Partner Directory",
+  title: { absolute: "Dental Industry Partner Directory | Insurance Untangled" },
   description:
     "The Insurance Untangled partner network brings together vetted dental industry professionals who share our belief that dentists deserve to navigate insurance with confidence.",
   alternates: { canonical: "https://www.insuranceuntangled.com/partners/" },

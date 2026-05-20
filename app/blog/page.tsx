@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getStaticBlogs } from "@/data/static-blogs";
 
 export const metadata: Metadata = {
-  title: "Dental PPO Insurance Blog",
+  title: { absolute: "Dental PPO Insurance Blog | Insurance Untangled" },
   description:
     "Practical guides, plain-English explainers, and strategy breakdowns for dentists who want to understand and work confidently within the insurance system.",
   alternates: { canonical: "https://www.insuranceuntangled.com/blog/" },

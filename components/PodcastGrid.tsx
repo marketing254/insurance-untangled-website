@@ -4,9 +4,10 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
+import { driveImageUrl } from "@/lib/sheets";
 
 const GATE_KEY = "iu_podcast_unlocked";
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQYiQ18Iw1tsSibabGYqmfRhSvplUBbLCi7aICxDPGzNrE6stcv_LdOOkmVLa8DpPtlw/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
 const PER_PAGE = 12;
 
 interface Episode {
@@ -141,25 +142,29 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
     return (
       <>
         <div
-          className="ep-thumb"
+          className="ep-thumb ep-thumb-glassy"
           style={{
             background: ep.poster_image
-              ? `linear-gradient(135deg,rgba(11,37,69,.65),rgba(19,49,92,.85)),url('${ep.poster_image}') center/cover no-repeat`
+              ? `linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 28%, transparent 72%, rgba(11,25,55,.18) 100%), url('${driveImageUrl(ep.poster_image, 800)}') center/cover no-repeat`
               : "linear-gradient(135deg,#0B2545,#13315C)",
           }}
         >
-          <div style={{ fontFamily: "var(--mono)", fontSize: "9px", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(168,196,228,.65)", marginBottom: ".2rem" }}>
-            Episode
-          </div>
-          <div style={{ fontFamily: "var(--serif)", fontSize: "2.4rem", fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-.02em" }}>
-            {ep.episode}
-          </div>
+          {/* Episode number lives on the poster image itself — no overlay text */}
+          {!ep.poster_image && (
+            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", padding: ".8rem 1rem" }}>
+              <div style={{ fontFamily: "var(--mono)", fontSize: "9px", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(168,196,228,.65)" }}>
+                Episode
+              </div>
+              <div style={{ fontFamily: "var(--serif)", fontSize: "2.4rem", fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-.02em" }}>
+                {ep.episode}
+              </div>
+            </div>
+          )}
         </div>
         {isGating ? (
           <GateForm onUnlock={() => handleUnlock(slug)} />
         ) : (
           <div className="ep-card-body">
-            <div className="ep-card-num">Episode {ep.episode}</div>
             <div className="ep-card-title">{ep.title}</div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: ".7rem", flexWrap: "wrap", gap: ".4rem" }}>
               <span className="ep-card-tag" style={{ background: bg, color }}>{ep.category || "Episode"}</span>
@@ -198,12 +203,22 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
           if (unlocked) {
             return (
               <Link key={ep.episode} href={`/podcast/${slug}/`} className="ep-card" style={{ textDecoration: "none", color: "inherit" }}>
-                <div className="ep-thumb" style={{ background: ep.poster_image ? `linear-gradient(135deg,rgba(11,37,69,.65),rgba(19,49,92,.85)),url('${ep.poster_image}') center/cover no-repeat` : "linear-gradient(135deg,#0B2545,#13315C)" }}>
-                  <div style={{ fontFamily: "var(--mono)", fontSize: "9px", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(168,196,228,.65)", marginBottom: ".2rem" }}>Episode</div>
-                  <div style={{ fontFamily: "var(--serif)", fontSize: "2.4rem", fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-.02em" }}>{ep.episode}</div>
+                <div
+                  className="ep-thumb ep-thumb-glassy"
+                  style={{
+                    background: ep.poster_image
+                      ? `linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 28%, transparent 72%, rgba(11,25,55,.18) 100%), url('${driveImageUrl(ep.poster_image, 800)}') center/cover no-repeat`
+                      : "linear-gradient(135deg,#0B2545,#13315C)",
+                  }}
+                >
+                  {!ep.poster_image && (
+                    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", padding: ".8rem 1rem" }}>
+                      <div style={{ fontFamily: "var(--mono)", fontSize: "9px", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(168,196,228,.65)" }}>Episode</div>
+                      <div style={{ fontFamily: "var(--serif)", fontSize: "2.4rem", fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-.02em" }}>{ep.episode}</div>
+                    </div>
+                  )}
                 </div>
                 <div className="ep-card-body">
-                  <div className="ep-card-num">Episode {ep.episode}</div>
                   <div className="ep-card-title">{ep.title}</div>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: ".7rem", flexWrap: "wrap", gap: ".4rem" }}>
                     <span className="ep-card-tag" style={{ ...categoryColor(ep.category) }}>{ep.category || "Episode"}</span>

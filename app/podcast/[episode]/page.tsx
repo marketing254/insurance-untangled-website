@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getPodcasts, podcastSlug, type Podcast } from "@/lib/sheets";
+import { getPodcasts, podcastSlug, driveImageUrl, type Podcast } from "@/lib/sheets";
 import PodcastEpisodeClient from "@/components/PodcastEpisodeClient";
 
 type Props = {
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       type: "article",
       url: `https://www.insuranceuntangled.com/podcast/${canonicalSlug}/`,
-      images: ep.poster_image ? [{ url: ep.poster_image }] : undefined,
+      images: ep.poster_image ? [{ url: driveImageUrl(ep.poster_image, 1200) }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
@@ -126,7 +126,7 @@ export default async function EpisodePage({ params }: Props) {
     url: `https://www.insuranceuntangled.com/podcast/${canonicalSlug}/`,
     ...(datePublished && { datePublished }),
     inLanguage: "en",
-    ...(ep.poster_image && { image: ep.poster_image }),
+    ...(ep.poster_image && { image: driveImageUrl(ep.poster_image, 1200) }),
     partOfSeries: {
       "@type": "PodcastSeries",
       name: "Insurance Untangled",

@@ -25,7 +25,9 @@
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 
-var NOTIFY_EMAIL = 'support@insuranceuntangled.com';
+// Comma-separated list. The first address is the primary "to" recipient;
+// all others are BCC'd so the email reaches everyone in a single quota-saving send.
+var NOTIFY_EMAIL = 'rushdhaakbar82@gmail.com,rushdha@ekwa.com,lester@ekwa.com,chamika.p@ekwa.com,shezaan@ekwa.com,dulaj@ekwa.com';
 
 // The same Google Sheet your Next.js app reads podcast/webinar/blog data from.
 var SHEET_ID = '167uuWRXLROf2MC91By9ofA-G6RTvePN0yEwItJdmQAU';
@@ -72,26 +74,47 @@ var HONEYPOT_FIELD = 'hp_field';
 // ─── ROUTING ─────────────────────────────────────────────────────────────────
 
 function doGet(e) {
-  var params = (e && e.parameter) ? e.parameter : {};
+  // Wrap everything so manual editor "Run" with no event arg still returns a clean response
+  try {
+    var params = (e && e.parameter) ? e.parameter : {};
 
-  // JSONP transcript proxy (PodcastEpisodeClient fetchProxyText)
-  if (params.callback) {
-    return handleTranscriptProxy(params);
+    // JSONP transcript proxy (PodcastEpisodeClient fetchProxyText)
+    if (params.callback) {
+      return handleTranscriptProxy(params);
+    }
+
+    // File / doc proxy
+    if (params.id || params.docUrl) {
+      return handleProxy(params);
+    }
+
+    // Form submission
+    if (params.form_type) {
+      return handleForm(params);
+    }
+
+    // Bare /exec hit OR manual "Run doGet" in editor → return a health-check JSON
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        ok: true,
+        service: 'Insurance Untangled Script',
+        endpoints: {
+          transcript: '?callback=cb&docUrl=...',
+          file:       '?id=DRIVE_FILE_ID',
+          form:       '?form_type=podcast_gate&name=...&email=...',
+        }
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
+}
 
-  // File / doc proxy
-  if (params.id || params.docUrl) {
-    return handleProxy(params);
-  }
-
-  // Form submission
-  if (params.form_type) {
-    return handleForm(params);
-  }
-
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true, service: 'Insurance Untangled Script' }))
-    .setMimeType(ContentService.MimeType.JSON);
+// Run this manually in the editor to test the deployment without needing an event
+function runDoGet() {
+  Logger.log(doGet().getContent());
 }
 
 function doPost(e) {
@@ -237,21 +260,9 @@ function handleForm(params) {
     sheetError = err.message;
   }
 
-  // ── 2. Email notification (best-effort) ─────────────────────────────────────
+  // ── 2. Email notification (best-effort — never blocks the sheet write) ──────
   if (!sheetError) {
-    try {
-      var fType   = params.form_type || 'general';
-      var fKeys   = Object.keys(params).filter(function(k) {
-        return k !== 'form_type' && k !== HONEYPOT_FIELD;
-      });
-      var subject = '[Insurance Untangled] New ' + fType.replace(/_/g, ' ') + ' submission';
-      var body    = 'New submission on insuranceuntangled.com\n\n'
-                  + 'Type: ' + fType + '\nTime: ' + new Date().toLocaleString() + '\n\n'
-                  + fKeys.map(function(k) { return k + ': ' + params[k]; }).join('\n');
-      MailApp.sendEmail({ to: NOTIFY_EMAIL, subject: subject, body: body });
-    } catch (emailErr) {
-      emailError = emailErr.message;
-    }
+    emailError = sendNotification(params);
   }
 
   // ── 3. Response ──────────────────────────────────────────────────────────────
@@ -263,6 +274,80 @@ function handleForm(params) {
   return ContentService
     .createTextOutput(JSON.stringify({ success: true, emailError: emailError || null }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ─── EMAIL NOTIFICATION — reliable multi-recipient via BCC ──────────────────
+// Splits the comma-separated NOTIFY_EMAIL into:
+//   - primary recipient (To)        — first address
+//   - everyone else (Bcc)           — remaining addresses
+//
+// Why BCC instead of a single "To" with all addresses joined by commas:
+//   - Multiple "To" addresses sometimes get rejected silently by Gmail's
+//     anti-spam if any single address is mistyped or has a bounced past.
+//   - BCC delivery is more forgiving: each recipient is processed independently.
+//   - Quota cost: still counts as 1 send (MailApp gives 100/day on free Gmail,
+//     1500/day on Workspace).
+//
+// Returns null on success, or an error message string on failure.
+
+function sendNotification(params) {
+  try {
+    var recipients = String(NOTIFY_EMAIL || '')
+      .split(',')
+      .map(function(r) { return r.trim(); })
+      .filter(function(r) { return r && r.indexOf('@') !== -1; });
+
+    if (recipients.length === 0) {
+      Logger.log('No valid notification recipients configured.');
+      return 'no recipients';
+    }
+
+    // Check quota before sending — avoids hitting Apps Script's daily limit
+    var remaining = MailApp.getRemainingDailyQuota();
+    if (remaining < 1) {
+      Logger.log('MailApp daily quota exhausted (remaining: ' + remaining + ')');
+      return 'quota exhausted';
+    }
+
+    var fType = params.form_type || 'general';
+    var fKeys = Object.keys(params).filter(function(k) {
+      return k !== 'form_type' && k !== HONEYPOT_FIELD;
+    });
+    var subject = '[Insurance Untangled] New ' + fType.replace(/_/g, ' ') + ' submission';
+    var body    = 'New submission on insuranceuntangled.com\n\n'
+                + 'Type: ' + fType + '\n'
+                + 'Time: ' + new Date().toLocaleString() + '\n\n'
+                + fKeys.map(function(k) { return k + ': ' + params[k]; }).join('\n');
+
+    var primary = recipients[0];
+    var bcc     = recipients.slice(1).join(',');
+
+    MailApp.sendEmail({
+      to:      primary,
+      bcc:     bcc || undefined,
+      subject: subject,
+      body:    body,
+      name:    'Insurance Untangled',
+      replyTo: 'support@insuranceuntangled.com'
+    });
+
+    Logger.log('Notification sent — primary: ' + primary + (bcc ? ' | bcc: ' + bcc : ''));
+    return null;
+  } catch (err) {
+    Logger.log('sendNotification failed: ' + err.message);
+    return err.message;
+  }
+}
+
+// Run this manually to verify email delivery to all configured recipients
+function testNotificationDelivery() {
+  var err = sendNotification({
+    form_type: 'delivery_test',
+    name:      'Delivery Test',
+    email:     'noreply@example.com',
+    note:      'If you receive this, multi-recipient BCC delivery is working.'
+  });
+  Logger.log(err ? 'ERROR: ' + err : 'OK — check inboxes of all addresses in NOTIFY_EMAIL');
 }
 
 // ─── TEST FUNCTIONS — run manually in Apps Script editor ─────────────────────

@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description:
     "Terms of Service for Insurance Untangled — the rules governing your use of insuranceuntangled.com, our podcast, webinars, and related services.",
   alternates: { canonical: "https://www.insuranceuntangled.com/terms/" },
+  // Legal boilerplate — don't index, but still follow internal links
+  robots: { index: false, follow: true },
 };
 
 export default function TermsPage() {

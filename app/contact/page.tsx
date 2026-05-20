@@ -3,7 +3,7 @@ import Link from "next/link";
 import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: { absolute: "Contact Insurance Untangled — Dental PPO & Marketing Questions" },
   description:
     "Have a question about dental insurance strategy, the podcast, or our services? Send us a message and we'll get back to you within 1 business day.",
   alternates: { canonical: "https://www.insuranceuntangled.com/contact/" },
@@ -23,7 +23,7 @@ export default function Contact() {
               <div className="cqb-label">Most popular</div>
               <div className="cqb-title">Book a Free Strategy Call</div>
               <div className="cqb-sub">15 min &bull; No obligation &bull; We&rsquo;ll review your practice first</div>
-              <Link href="/dental-marketing" className="cqb-btn">Book Now &rarr;</Link>
+              <Link href="/dental-marketing/" className="cqb-btn">Book Now &rarr;</Link>
             </div>
             <div className="cqb-alt">
               <a href="https://wa.me/13157435373" target="_blank" rel="noopener noreferrer" className="cqb-alt-link">
@@ -58,7 +58,7 @@ export default function Contact() {
                 <div className="sec-eyebrow" style={{ marginBottom: ".5rem" }}>Free consultation</div>
                 <div style={{ fontFamily: "var(--serif)", fontSize: "1.1rem", fontWeight: 700, color: "var(--ink)", marginBottom: ".5rem" }}>Prefer to talk strategy?</div>
                 <p style={{ fontSize: "13px", color: "var(--ink-3)", marginBottom: "1rem" }}>Book a free marketing strategy meeting with Lila from Ekwa and get a personalized growth plan for your practice.</p>
-                <Link href="/dental-marketing" className="btn-primary">Book Free Strategy Meeting &rarr;</Link>
+                <Link href="/dental-marketing/" className="btn-primary">Book Free Strategy Meeting &rarr;</Link>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@ export default function Contact() {
           <p style={{ fontSize: "15px", color: "rgba(255,255,255,.5)", maxWidth: "500px", margin: "0 auto 2rem", lineHeight: 1.7 }}>10 questions. A personalised score across 6 dimensions. A free report in your inbox. Takes 2 minutes.</p>
           <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
             <Link href="/ppo-scorecard/" className="btn-primary" style={{ fontSize: "15px", padding: ".9rem 2rem" }}>Take the Free Scorecard &rarr;</Link>
-            <Link href="/contact" className="btn-outline-light" style={{ fontSize: "15px", padding: ".9rem 2rem" }}>Get in Touch</Link>
+            <Link href="/contact/" className="btn-outline-light" style={{ fontSize: "15px", padding: ".9rem 2rem" }}>Get in Touch</Link>
           </div>
         </div>
       </section>
