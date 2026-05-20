@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
@@ -9,6 +9,21 @@ import { driveImageUrl } from "@/lib/sheets";
 const GATE_KEY = "iu_podcast_unlocked";
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
 const PER_PAGE = 12;
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",
+  "yopmail.com", "throwawaymail.com", "fakeinbox.com", "getnada.com", "maildrop.cc",
+  "sharklasers.com", "tempmailaddress.com", "dispostable.com", "mailnesia.com", "spam4.me",
+  "tempinbox.com", "mintemail.com", "moakt.com", "tempr.email", "emailondeck.com",
+]);
+
+function isValidEmailLocal(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v)) return false;
+  const domain = v.split("@")[1] || "";
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return false;
+  return true;
+}
 
 interface Episode {
   episode: string;
@@ -32,23 +47,43 @@ function categoryColor(cat: string): { bg: string; color: string } {
 }
 
 // Inline gate form — appears inside a locked card (no <Link> wrapper, so inputs never navigate)
-function GateForm({ onUnlock }: { onUnlock: () => void }) {
+function GateForm({ onUnlock, episodeTitle }: { onUnlock: () => void; episodeTitle: string }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const mountedAt = useRef<number>(Date.now());
 
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
-  const submit = async (e: React.SyntheticEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!name.trim() || !email.trim()) { setError("Please fill in both fields."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email."); return; }
+
+    const form = e.currentTarget;
+    const hp1 = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
+    const hp2 = (form.elements.namedItem("website") as HTMLInputElement)?.value || "";
+    const hp3 = (form.elements.namedItem("phone_alt") as HTMLInputElement)?.value || "";
+    if (hp1 || hp2 || hp3) return;
+
+    if (Date.now() - mountedAt.current < 2500) {
+      setError("Please take a moment to fill in your details.");
+      return;
+    }
+
+    if (!name.trim() || name.trim().length < 2) { setError("Please enter your full name."); return; }
+    if (!isValidEmailLocal(email)) { setError("Please enter a valid work email."); return; }
+
     setLoading(true);
     setError("");
     try {
-      const params = new URLSearchParams({ form_type: "podcast_gate", name: name.trim(), email: email.trim(), hp_field: "" });
+      const params = new URLSearchParams({
+        form_type: "podcast_gate",
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        episode_title: episodeTitle,
+        source: "card_gate",
+      });
       await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
     } catch { /* non-blocking */ }
     localStorage.setItem(GATE_KEY, "1");
@@ -56,25 +91,28 @@ function GateForm({ onUnlock }: { onUnlock: () => void }) {
   };
 
   return (
-    <form onSubmit={submit} onClick={stop} style={{ padding: "1.1rem", display: "flex", flexDirection: "column", gap: ".6rem" }}>
+    <form onSubmit={submit} onClick={stop} noValidate autoComplete="off" style={{ padding: "1.1rem", display: "flex", flexDirection: "column", gap: ".6rem", position: "relative" }}>
       <div style={{ fontFamily: "var(--mono)", fontSize: "9.5px", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--teal)", marginBottom: ".1rem" }}>
         Free access — unlock all episodes
       </div>
       <input
-        type="text" placeholder="Your name" value={name} required
+        type="text" name="name" placeholder="Your name" value={name} required autoComplete="name"
         onChange={(e) => { stop(e); setName(e.target.value); }}
         onClick={stop}
         style={{ padding: ".55rem .75rem", border: "1px solid var(--paper-3)", borderRadius: "var(--r)", fontSize: "13px", fontFamily: "var(--sans)", background: "#fff" }}
       />
       <input
-        type="email" placeholder="your@email.com" value={email} required
+        type="email" name="email" placeholder="your@email.com" value={email} required autoComplete="email"
         onChange={(e) => { stop(e); setEmail(e.target.value); }}
         onClick={stop}
         style={{ padding: ".55rem .75rem", border: "1px solid var(--paper-3)", borderRadius: "var(--r)", fontSize: "13px", fontFamily: "var(--sans)", background: "#fff" }}
       />
-      {/* Honeypot */}
-      <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" aria-hidden="true"
-        style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }} />
+      {/* Multi-honeypot: three decoy fields with conventional names that bots auto-fill */}
+      <div style={{ position: "absolute", left: "-9999px", top: "-9999px", height: 0, width: 0, overflow: "hidden" }} aria-hidden="true">
+        <label>Leave blank<input type="text" name="hp_field" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        <label>Phone<input type="text" name="phone_alt" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+      </div>
       {error && <div style={{ fontSize: "11.5px", color: "#c0392b" }}>{error}</div>}
       <button
         type="submit" disabled={loading} onClick={stop}
@@ -162,11 +200,13 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
           )}
         </div>
         {isGating ? (
-          <GateForm onUnlock={() => handleUnlock(slug)} />
+          <GateForm episodeTitle={`Ep ${ep.episode}: ${ep.title}`} onUnlock={() => handleUnlock(slug)} />
         ) : (
           <div className="ep-card-body">
-            <div className="ep-card-title">{ep.title}</div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: ".7rem", flexWrap: "wrap", gap: ".4rem" }}>
+            {/* Title visually hidden — poster image already shows it.
+                Kept in DOM as sr-only span so crawlers, AI, and screen readers still read it. */}
+            <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".4rem" }}>
               <span className="ep-card-tag" style={{ background: bg, color }}>{ep.category || "Episode"}</span>
               <span style={{ fontFamily: "var(--mono)", fontSize: "9.5px", color: "var(--ink-4)", letterSpacing: ".04em" }}>
                 🔒 Free Access
@@ -219,8 +259,8 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
                   )}
                 </div>
                 <div className="ep-card-body">
-                  <div className="ep-card-title">{ep.title}</div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: ".7rem", flexWrap: "wrap", gap: ".4rem" }}>
+                  <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".4rem" }}>
                     <span className="ep-card-tag" style={{ ...categoryColor(ep.category) }}>{ep.category || "Episode"}</span>
                     <span style={{ fontFamily: "var(--mono)", fontSize: "9.5px", color: "var(--teal)", fontWeight: 700, letterSpacing: ".06em" }}>▶ Listen</span>
                   </div>

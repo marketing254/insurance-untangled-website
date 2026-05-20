@@ -1,8 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",
+  "yopmail.com", "throwawaymail.com", "fakeinbox.com", "getnada.com", "maildrop.cc",
+  "sharklasers.com", "tempmailaddress.com", "dispostable.com", "mailnesia.com", "spam4.me",
+  "tempinbox.com", "mintemail.com", "moakt.com", "tempr.email", "emailondeck.com",
+]);
+
+function isValidEmail(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v)) return false;
+  const domain = v.split("@")[1] || "";
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return false;
+  return true;
+}
 
 export default function ResourcesForm() {
   const [name, setName] = useState("");
@@ -11,23 +26,34 @@ export default function ResourcesForm() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const mountedAt = useRef<number>(Date.now());
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!name.trim()) { setError("Please enter your name."); return; }
+
+    const form = e.currentTarget;
+    const hp1 = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
+    const hp2 = (form.elements.namedItem("website") as HTMLInputElement)?.value || "";
+    const hp3 = (form.elements.namedItem("phone_alt") as HTMLInputElement)?.value || "";
+    if (hp1 || hp2 || hp3) return;
+
+    if (Date.now() - mountedAt.current < 2500) {
+      setError("Please take a moment to fill in your details.");
+      return;
+    }
+
+    if (!name.trim() || name.trim().length < 2) { setError("Please enter your full name."); return; }
     if (!email.trim()) { setError("Please enter your email."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email address."); return; }
+    if (!isValidEmail(email)) { setError("Please enter a valid work email address."); return; }
 
     setLoading(true);
     setError("");
     try {
-      const hp = (e.currentTarget.querySelector<HTMLInputElement>('[name="hp_field"]')?.value || "");
       const params = new URLSearchParams({
         form_type: "resource_request",
         name: name.trim(),
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         practice: practice.trim(),
-        hp_field: hp,
       });
       await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
     } catch { /* non-blocking */ }
@@ -91,17 +117,23 @@ export default function ResourcesForm() {
   return (
     <form
       onSubmit={handleSubmit}
+      noValidate
+      autoComplete="on"
       style={{
         background: "#fff",
         border: "1px solid var(--paper-3)",
         borderRadius: "var(--r-lg)",
         padding: "2.25rem 2rem",
         boxShadow: "0 12px 36px rgba(11,37,69,.08)",
+        position: "relative",
       }}
     >
-      {/* Honeypot — invisible to humans, bots fill it */}
-      <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" aria-hidden="true"
-        style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }} />
+      {/* Multi-honeypot — invisible to humans, bots fill these */}
+      <div style={{ position: "absolute", left: "-9999px", top: "-9999px", height: 0, width: 0, overflow: "hidden" }} aria-hidden="true">
+        <label>Leave blank<input type="text" name="hp_field" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        <label>Phone<input type="text" name="phone_alt" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+      </div>
 
       <div className="page-eyebrow" style={{ color: "var(--teal)", marginBottom: ".5rem" }}>
         Free download

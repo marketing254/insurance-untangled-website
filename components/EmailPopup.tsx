@@ -1,11 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec"; // Paste your deployed Apps Script URL here
 
 const ALLOWED_PATHS = ["/", "/podcast", "/events"];
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",
+  "yopmail.com", "throwawaymail.com", "fakeinbox.com", "getnada.com", "maildrop.cc",
+  "sharklasers.com", "tempmailaddress.com", "dispostable.com", "mailnesia.com", "spam4.me",
+  "tempinbox.com", "mintemail.com", "moakt.com", "tempr.email", "emailondeck.com",
+]);
+
+function isValidEmail(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v)) return false;
+  const domain = v.split("@")[1] || "";
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return false;
+  return true;
+}
 
 async function submitForm(
   data: Record<string, string>,
@@ -42,6 +57,8 @@ export default function EmailPopup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const openedAt = useRef<number>(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -57,6 +74,7 @@ export default function EmailPopup() {
       // Re-check in case it was dismissed during the wait
       if (sessionStorage.getItem("iu_popup_dismissed") !== "1") {
         setOpen(true);
+        openedAt.current = Date.now();
       }
     }, 20000);
 
@@ -70,10 +88,31 @@ export default function EmailPopup() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
+    setError("");
+
+    const form = e.currentTarget;
+    const hp1 = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
+    const hp2 = (form.elements.namedItem("website") as HTMLInputElement)?.value || "";
+    const hp3 = (form.elements.namedItem("phone_alt") as HTMLInputElement)?.value || "";
+    if (hp1 || hp2 || hp3) return;
+
+    if (Date.now() - openedAt.current < 2500) {
+      setError("Please take a moment to fill in your details.");
+      return;
+    }
+
+    if (!name.trim() || name.trim().length < 2) {
+      setError("Please enter your name.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     setSubmitting(true);
-    const hp = (e.currentTarget.querySelector<HTMLInputElement>('[name="hp_field"]')?.value || "");
-    await submitForm({ name: name.trim(), email: email.trim(), hp_field: hp }, "email_popup");
+    await submitForm({ name: name.trim(), email: email.trim().toLowerCase() }, "email_popup");
     setSubmitting(false);
     setSubmitted(true);
     sessionStorage.setItem("iu_popup_dismissed", "1");
@@ -169,26 +208,34 @@ export default function EmailPopup() {
               </div>
             </div>
 
-            <form className="ep-form" onSubmit={handleSubmit} style={{ flexDirection: "column" }}>
-              {/* Honeypot — invisible to humans, bots fill it */}
-              <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" aria-hidden="true"
-                style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }} />
+            <form className="ep-form" onSubmit={handleSubmit} noValidate autoComplete="on" style={{ flexDirection: "column", position: "relative" }}>
+              {/* Multi-honeypot — invisible to humans, bots fill these */}
+              <div style={{ position: "absolute", left: "-9999px", top: "-9999px", height: 0, width: 0, overflow: "hidden" }} aria-hidden="true">
+                <label>Leave blank<input type="text" name="hp_field" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+                <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+                <label>Phone<input type="text" name="phone_alt" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+              </div>
               <input
                 className="ep-input"
                 type="text"
+                name="name"
                 placeholder="Your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                autoComplete="name"
               />
               <input
                 className="ep-input"
                 type="email"
+                name="email"
                 placeholder="Your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
+              {error && <div style={{ fontSize: "12px", color: "#c0392b", textAlign: "left" }}>{error}</div>}
               <button
                 className="ep-submit"
                 type="submit"

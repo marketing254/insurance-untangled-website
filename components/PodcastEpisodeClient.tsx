@@ -1,16 +1,32 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
 import { driveImageUrl } from "@/lib/sheets";
 import { buildPodcastTranscript, type PodcastTranscript } from "@/lib/transcripts";
 
 const GATE_KEY = "iu_podcast_unlocked";
 
-const TRANSCRIPT_ENDPOINT =
+const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
+
+const TRANSCRIPT_ENDPOINT = APPS_SCRIPT_URL;
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",
+  "yopmail.com", "throwawaymail.com", "fakeinbox.com", "getnada.com", "maildrop.cc",
+  "sharklasers.com", "tempmailaddress.com", "dispostable.com", "mailnesia.com", "spam4.me",
+  "tempinbox.com", "mintemail.com", "moakt.com", "tempr.email", "emailondeck.com",
+]);
+
+function isValidEmail(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v)) return false;
+  const domain = v.split("@")[1] || "";
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return false;
+  return true;
+}
 
 type Episode = {
   episode: string;
@@ -182,9 +198,122 @@ function parseDescription(description: string): string[] {
   return description ? description.split(/\\n|\n/).filter((line) => line.trim()) : [];
 }
 
+function PlayerGateForm({ episodeTitle, onUnlock }: { episodeTitle: string; onUnlock: () => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const mountedAt = useRef<number>(Date.now());
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+
+    const form = e.currentTarget as HTMLFormElement;
+    const hp1 = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
+    const hp2 = (form.elements.namedItem("website") as HTMLInputElement)?.value || "";
+    const hp3 = (form.elements.namedItem("phone_alt") as HTMLInputElement)?.value || "";
+    if (hp1 || hp2 || hp3) return;
+
+    if (Date.now() - mountedAt.current < 2500) {
+      setError("Please take a moment to fill in your details.");
+      return;
+    }
+
+    if (!name.trim() || name.trim().length < 2) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid work email address.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const params = new URLSearchParams();
+      params.set("form_type", "podcast_gate");
+      params.set("name", name.trim());
+      params.set("email", email.trim().toLowerCase());
+      params.set("episode_title", episodeTitle);
+      params.set("source", "episode_page");
+      await fetch(APPS_SCRIPT_URL, { method: "POST", mode: "no-cors", body: params });
+      localStorage.setItem(GATE_KEY, "1");
+      onUnlock();
+    } catch {
+      localStorage.setItem(GATE_KEY, "1");
+      onUnlock();
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div style={{ background: "var(--navy)", borderRadius: "var(--r-lg)", padding: "1.75rem 1.75rem 1.5rem", marginBottom: "2.5rem", border: "1px solid rgba(168,196,228,.18)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: ".65rem", marginBottom: ".85rem" }}>
+        <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.14)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold-lt)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+        </div>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--sky)", opacity: 0.75 }}>
+          Unlock the audio
+        </span>
+      </div>
+      <h3 style={{ fontFamily: "var(--serif)", fontSize: "1.15rem", fontWeight: 700, color: "#fff", marginBottom: ".4rem", lineHeight: 1.3 }}>
+        Listen to the full episode
+      </h3>
+      <p style={{ fontSize: "13px", color: "rgba(255,255,255,.6)", marginBottom: "1.1rem", lineHeight: 1.55 }}>
+        Enter your details once to unlock every episode. You will also receive new episode alerts. Unsubscribe anytime.
+      </p>
+      <form onSubmit={handleSubmit} noValidate autoComplete="off">
+        <div style={{ position: "absolute", left: "-9999px", top: "-9999px", height: 0, width: 0, overflow: "hidden" }} aria-hidden="true">
+          <label>Leave blank<input type="text" name="hp_field" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+          <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+          <label>Phone<input type="text" name="phone_alt" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: ".7rem", marginBottom: ".85rem" }}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Full name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            autoComplete="name"
+            style={{ padding: ".7rem .85rem", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.14)", borderRadius: "8px", color: "#fff", fontSize: "13px", fontFamily: "var(--sans)" }}
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="your@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            style={{ padding: ".7rem .85rem", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.14)", borderRadius: "8px", color: "#fff", fontSize: "13px", fontFamily: "var(--sans)" }}
+          />
+        </div>
+        {error && (
+          <div style={{ fontSize: "12px", color: "#ffb4b4", marginBottom: ".75rem" }}>{error}</div>
+        )}
+        <button
+          type="submit"
+          disabled={submitting}
+          className="btn-teal"
+          style={{ width: "100%", justifyContent: "center", fontSize: "13px", opacity: submitting ? 0.7 : 1, cursor: submitting ? "not-allowed" : "pointer" }}
+        >
+          {submitting ? "Unlocking..." : "Unlock & Listen"}
+        </button>
+        <p style={{ fontSize: "11px", color: "rgba(255,255,255,.4)", marginTop: ".75rem", lineHeight: 1.5 }}>
+          We respect your privacy. No spam, ever. Read our <Link href="/privacy/" style={{ color: "rgba(255,255,255,.55)", textDecoration: "underline" }}>privacy policy</Link>.
+        </p>
+      </form>
+    </div>
+  );
+}
+
 export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpisodes }: Props) {
-  const router = useRouter();
-  const [gateChecked, setGateChecked] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
   const [episodes, setEpisodes] = useState<Episode[]>(() => initialEpisodes.map(normalizeEpisode));
   const [episode, setEpisode] = useState<Episode>(() => normalizeEpisode(initialEpisode));
   const [transcript, setTranscript] = useState<PodcastTranscript | null>(null);
@@ -193,14 +322,13 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
   const [activeTab, setActiveTab] = useState<"notes" | "transcript">("notes");
   const targetEpisode = episodeNumber(slug) || episodeNumber(initialEpisode.episode);
 
-  // Route protection — redirect to /podcast/ if user hasn't completed the gate form
+  // Player-only gate — page content (title, notes, transcript) stays visible
+  // to all crawlers and direct-link visitors. Only the audio element is gated.
+  // This means: AI crawlers + Google get the FULL transcript text, but media
+  // playback requires completing the lead form once.
   useEffect(() => {
-    if (!localStorage.getItem(GATE_KEY)) {
-      router.replace("/podcast/");
-    } else {
-      setGateChecked(true);
-    }
-  }, [router]);
+    setUnlocked(!!localStorage.getItem(GATE_KEY));
+  }, []);
 
   useEffect(() => {
     fetchSheetClient("podcasts")
@@ -261,9 +389,6 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
   const nextEp = currentIdx > 0 ? episodes[currentIdx - 1] : null;
   const hasTranscript = Boolean(episode.transcript_url?.trim());
 
-  // Prevent content flash while gate check + redirect is in progress
-  if (!gateChecked) return null;
-
   return (
     <>
       <div className="page-banner" style={{ paddingBottom: "2.5rem" }}>
@@ -301,22 +426,27 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
         <div className="container" style={{ maxWidth: "900px" }}>
           <div className="ep-detail-grid">
             <div>
-              {/* Audio player — gate is on the podcast grid cards, not here */}
+              {/* Player-only gate: title, notes, transcript above/below stay
+                  visible to crawlers + direct visitors. Only audio is gated. */}
               {episode.audio_source && (
-                <div style={{ background: "var(--navy)", borderRadius: "var(--r-lg)", padding: "1.5rem 1.75rem", marginBottom: "2.5rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: ".65rem", marginBottom: ".85rem" }}>
-                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.14)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold-lt)"><path d="M8 5v14l11-7z" /></svg>
+                unlocked ? (
+                  <div style={{ background: "var(--navy)", borderRadius: "var(--r-lg)", padding: "1.5rem 1.75rem", marginBottom: "2.5rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: ".65rem", marginBottom: ".85rem" }}>
+                      <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.14)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold-lt)"><path d="M8 5v14l11-7z" /></svg>
+                      </div>
+                      <span style={{ fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--sky)", opacity: 0.65 }}>
+                        Listen to Episode {episode.episode}
+                      </span>
                     </div>
-                    <span style={{ fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--sky)", opacity: 0.65 }}>
-                      Listen to Episode {episode.episode}
-                    </span>
+                    <audio controls preload="metadata" style={{ width: "100%", borderRadius: "6px" }}>
+                      <source src={episode.audio_source} type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
                   </div>
-                  <audio controls preload="metadata" style={{ width: "100%", borderRadius: "6px" }}>
-                    <source src={episode.audio_source} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
+                ) : (
+                  <PlayerGateForm episodeTitle={`Ep ${episode.episode}: ${episode.title}`} onUnlock={() => setUnlocked(true)} />
+                )
               )}
 
               <div className="podcast-content-panel">

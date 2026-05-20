@@ -1,19 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",
+  "yopmail.com", "throwawaymail.com", "fakeinbox.com", "getnada.com", "maildrop.cc",
+  "sharklasers.com", "tempmailaddress.com", "dispostable.com", "mailnesia.com", "spam4.me",
+  "tempinbox.com", "mintemail.com", "moakt.com", "tempr.email", "emailondeck.com",
+]);
+
+function isValidEmail(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v)) return false;
+  const domain = v.split("@")[1] || "";
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return false;
+  return true;
+}
 
 export default function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const mountedAt = useRef<number>(Date.now());
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
 
     const form = e.currentTarget;
+
+    // Multi-honeypot check
+    const hp1 = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
+    const hp2 = (form.elements.namedItem("website") as HTMLInputElement)?.value || "";
+    const hp3 = (form.elements.namedItem("phone_alt") as HTMLInputElement)?.value || "";
+    if (hp1 || hp2 || hp3) return;
+
+    // Time trap — block submissions faster than 2.5s after form mount
+    if (Date.now() - mountedAt.current < 2500) {
+      setError("Please take a moment to fill in your details.");
+      return;
+    }
+
     const name = (form.elements.namedItem("cf-name") as HTMLInputElement).value.trim();
     const email = (form.elements.namedItem("cf-email") as HTMLInputElement).value.trim();
     const practice = (form.elements.namedItem("cf-practice") as HTMLInputElement).value.trim();
@@ -24,16 +53,29 @@ export default function ContactForm() {
       return;
     }
 
+    if (name.length < 2) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid work email address.");
+      return;
+    }
+
+    if (message.length < 10) {
+      setError("Please share a bit more about how we can help.");
+      return;
+    }
+
     setSubmitting(true);
 
-    const hp = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
     const params = new URLSearchParams();
     params.set("form_type", "contact");
     params.set("name", name);
-    params.set("email", email);
+    params.set("email", email.toLowerCase());
     if (practice) params.set("practice", practice);
     params.set("message", message);
-    params.set("hp_field", hp);
 
     try {
       await fetch(FORM_ENDPOINT + "?" + params.toString(), {
@@ -63,10 +105,13 @@ export default function ContactForm() {
   return (
     <div className="contact-form reveal-left">
       <h2 style={{ fontFamily: "var(--serif)", fontSize: "1.5rem", fontWeight: 700, color: "var(--ink)", marginBottom: "1.5rem" }}>Send us a message</h2>
-      <form onSubmit={handleSubmit}>
-        {/* Honeypot — invisible to humans, bots fill it */}
-        <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" aria-hidden="true"
-          style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }} />
+      <form onSubmit={handleSubmit} noValidate autoComplete="on" style={{ position: "relative" }}>
+        {/* Multi-honeypot: three decoy fields with conventional names */}
+        <div style={{ position: "absolute", left: "-9999px", top: "-9999px", height: 0, width: 0, overflow: "hidden" }} aria-hidden="true">
+          <label>Leave blank<input type="text" name="hp_field" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+          <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+          <label>Phone<input type="text" name="phone_alt" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        </div>
         <div className="form-group">
           <label className="form-label" htmlFor="cf-name">Your name <span style={{ color: "#c0392b" }}>*</span></label>
           <input id="cf-name" name="cf-name" className="form-input" type="text" placeholder="Dr. Jane Smith" required />

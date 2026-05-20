@@ -438,7 +438,7 @@ section { padding: 4rem 0; }
 .filter-row { display: flex; gap: .45rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
 .filter-tab { padding: .38rem .9rem; border: 1px solid var(--paper-3); border-radius: 20px; font-size: 12.5px; font-weight: 500; color: var(--ink-3); cursor: pointer; transition: all .18s; background: var(--paper); letter-spacing: .01em; }
 .filter-tab:hover, .filter-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-.ep-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.35rem; }
+.ep-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.35rem; align-items: start; }
 .ep-card { background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: var(--r-lg); overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: border-color .18s, transform .18s, box-shadow .18s; }
 .ep-card:hover { border-color: var(--steel-lt); transform: translateY(-6px); box-shadow: 0 12px 36px rgba(11,37,69,.94); }
 .ep-card-img-placeholder { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, var(--navy-lt) 0%, var(--steel) 100%); display: flex; align-items: center; justify-content: center; }
@@ -452,7 +452,7 @@ section { padding: 4rem 0; }
 .page-btn:hover, .page-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 
 /* ── EVENTS PAGE ─────────────────────────────────────────────── */
-.replay-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.35rem; }
+.replay-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.35rem; align-items: start; }
 .replay-card { background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: var(--r-lg); overflow: hidden; cursor: pointer; transition: border-color .18s, transform .18s, box-shadow .18s; display: flex; flex-direction: column; }
 .replay-card:hover { border-color: var(--steel-lt); transform: translateY(-6px); box-shadow: 0 12px 36px rgba(11,37,69,.94); }
 .replay-thumb { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, var(--navy-lt) 0%, var(--steel) 100%); display: flex; align-items: center; justify-content: center; position: relative; }

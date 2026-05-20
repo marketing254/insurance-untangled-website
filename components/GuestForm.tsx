@@ -1,9 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const FORM_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",
+  "yopmail.com", "throwawaymail.com", "fakeinbox.com", "getnada.com", "maildrop.cc",
+  "sharklasers.com", "tempmailaddress.com", "dispostable.com", "mailnesia.com", "spam4.me",
+  "tempinbox.com", "mintemail.com", "moakt.com", "tempr.email", "emailondeck.com",
+]);
+
+function isValidEmail(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v)) return false;
+  const domain = v.split("@")[1] || "";
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return false;
+  return true;
+}
 
 type FormState = {
   firstName: string;
@@ -36,6 +51,7 @@ export default function GuestForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const mountedAt = useRef<number>(Date.now());
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -44,6 +60,17 @@ export default function GuestForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+
+    const form = e.currentTarget;
+    const hp1 = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
+    const hp2 = (form.elements.namedItem("website") as HTMLInputElement)?.value || "";
+    const hp3 = (form.elements.namedItem("phone_alt") as HTMLInputElement)?.value || "";
+    if (hp1 || hp2 || hp3) return;
+
+    if (Date.now() - mountedAt.current < 2500) {
+      setError("Please take a moment to fill in your details.");
+      return;
+    }
 
     if (
       !data.firstName.trim() ||
@@ -59,17 +86,25 @@ export default function GuestForm() {
       return;
     }
 
+    if (!isValidEmail(data.email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (data.bio.trim().length < 20) {
+      setError("Please tell us a bit more about yourself (at least 20 characters).");
+      return;
+    }
+
     setSubmitting(true);
 
-    const hp = (e.currentTarget.querySelector<HTMLInputElement>('[name="hp_field"]')?.value || "");
     const params = new URLSearchParams();
     params.set("form_type", "guest");
-    params.set("hp_field", hp);
     params.set("firstName", data.firstName.trim());
     params.set("lastName", data.lastName.trim());
     params.set("title", data.title.trim());
     params.set("firm", data.firm.trim());
-    params.set("email", data.email.trim());
+    params.set("email", data.email.trim().toLowerCase());
     if (data.phone.trim()) params.set("phone", data.phone.trim());
     params.set("applyAs", data.applyAs);
     params.set("topic", data.topic);
@@ -170,10 +205,13 @@ export default function GuestForm() {
         3 business days.
       </p>
 
-      <form onSubmit={handleSubmit} noValidate>
-        {/* Honeypot — invisible to humans, bots fill it; server discards if filled */}
-        <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" aria-hidden="true"
-          style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }} />
+      <form onSubmit={handleSubmit} noValidate autoComplete="on" style={{ position: "relative" }}>
+        {/* Multi-honeypot — invisible to humans, bots fill these */}
+        <div style={{ position: "absolute", left: "-9999px", top: "-9999px", height: 0, width: 0, overflow: "hidden" }} aria-hidden="true">
+          <label>Leave blank<input type="text" name="hp_field" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+          <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+          <label>Phone<input type="text" name="phone_alt" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        </div>
         <div className="guest-field-row">
           <div className="guest-field">
             <label htmlFor="gf-first">First Name *</label>

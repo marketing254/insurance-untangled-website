@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
@@ -9,23 +9,58 @@ import { driveImageUrl, webinarSlug as sharedWebinarSlug } from "@/lib/sheets";
 const GATE_KEY = "iu_podcast_unlocked";
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
 
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",
+  "yopmail.com", "throwawaymail.com", "fakeinbox.com", "getnada.com", "maildrop.cc",
+  "sharklasers.com", "tempmailaddress.com", "dispostable.com", "mailnesia.com", "spam4.me",
+  "tempinbox.com", "mintemail.com", "moakt.com", "tempr.email", "emailondeck.com",
+]);
+
+function isValidEmailLocal(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v)) return false;
+  const domain = v.split("@")[1] || "";
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return false;
+  return true;
+}
+
 // Shared inline gate form for webinar cards
 function WebinarGateForm({ title, onUnlock }: { title: string; onUnlock: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const mountedAt = useRef<number>(Date.now());
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
-  const submit = async (e: React.SyntheticEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!name.trim() || !email.trim()) { setError("Please fill in both fields."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email."); return; }
+
+    const form = e.currentTarget;
+    const hp1 = (form.elements.namedItem("hp_field") as HTMLInputElement)?.value || "";
+    const hp2 = (form.elements.namedItem("website") as HTMLInputElement)?.value || "";
+    const hp3 = (form.elements.namedItem("phone_alt") as HTMLInputElement)?.value || "";
+    if (hp1 || hp2 || hp3) return;
+
+    if (Date.now() - mountedAt.current < 2500) {
+      setError("Please take a moment to fill in your details.");
+      return;
+    }
+
+    if (!name.trim() || name.trim().length < 2) { setError("Please enter your full name."); return; }
+    if (!isValidEmailLocal(email)) { setError("Please enter a valid work email."); return; }
+
     setLoading(true);
     setError("");
     try {
-      const params = new URLSearchParams({ form_type: "webinar_access", name: name.trim(), email: email.trim(), webinar_title: title, hp_field: "" });
+      const params = new URLSearchParams({
+        form_type: "webinar_access",
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        webinar_title: title,
+        source: "card_gate",
+      });
       await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
     } catch { /* non-blocking */ }
     localStorage.setItem(GATE_KEY, "1");
@@ -33,19 +68,22 @@ function WebinarGateForm({ title, onUnlock }: { title: string; onUnlock: () => v
   };
 
   return (
-    <form onSubmit={submit} onClick={stop} style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: ".55rem" }}>
+    <form onSubmit={submit} onClick={stop} noValidate autoComplete="off" style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: ".55rem", position: "relative" }}>
       <div style={{ fontFamily: "var(--mono)", fontSize: "9px", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--teal)" }}>
         Free CE webinar access
       </div>
-      <input type="text" placeholder="Your name" value={name} required onClick={stop}
+      <input type="text" name="name" placeholder="Your name" value={name} required autoComplete="name" onClick={stop}
         onChange={(e) => { stop(e); setName(e.target.value); }}
         style={{ padding: ".5rem .7rem", border: "1px solid var(--paper-3)", borderRadius: "var(--r)", fontSize: "12.5px", fontFamily: "var(--sans)", background: "#fff" }} />
-      <input type="email" placeholder="your@email.com" value={email} required onClick={stop}
+      <input type="email" name="email" placeholder="your@email.com" value={email} required autoComplete="email" onClick={stop}
         onChange={(e) => { stop(e); setEmail(e.target.value); }}
         style={{ padding: ".5rem .7rem", border: "1px solid var(--paper-3)", borderRadius: "var(--r)", fontSize: "12.5px", fontFamily: "var(--sans)", background: "#fff" }} />
-      {/* Honeypot */}
-      <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" aria-hidden="true"
-        style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }} />
+      {/* Multi-honeypot: decoy fields with conventional names that bots auto-fill */}
+      <div style={{ position: "absolute", left: "-9999px", top: "-9999px", height: 0, width: 0, overflow: "hidden" }} aria-hidden="true">
+        <label>Leave blank<input type="text" name="hp_field" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+        <label>Phone<input type="text" name="phone_alt" tabIndex={-1} autoComplete="off" defaultValue="" /></label>
+      </div>
       {error && <div style={{ fontSize: "11px", color: "#c0392b" }}>{error}</div>}
       <button type="submit" disabled={loading} onClick={stop}
         style={{ padding: ".55rem", background: "var(--teal)", color: "#fff", border: "none", borderRadius: "var(--r)", fontFamily: "var(--sans)", fontWeight: 700, fontSize: "12.5px", cursor: loading ? "wait" : "pointer" }}>
@@ -277,7 +315,9 @@ export function WebinarReplays({ initialWebinars }: { initialWebinars: WebinarRo
                   <div className="replay-thumb">{thumbContent(w, grad)}</div>
                   <div className="replay-body">
                     <div className="replay-date">{formatReplayDate(w.date_iso, w.month_year)}</div>
-                    <div className="replay-title">{w.title}</div>
+                    {/* Title visually hidden — replay-thumb-caption shows it on the gradient thumb.
+                        Kept in DOM as sr-only for crawlers, AI, and screen readers. */}
+                    <span className="sr-only">{w.title}</span>
                     <div className="replay-badge">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                       1 CE Credit
@@ -305,7 +345,9 @@ export function WebinarReplays({ initialWebinars }: { initialWebinars: WebinarRo
                 ) : (
                   <div className="replay-body">
                     <div className="replay-date">{formatReplayDate(w.date_iso, w.month_year)}</div>
-                    <div className="replay-title">{w.title}</div>
+                    {/* Title visually hidden — replay-thumb-caption shows it on the gradient thumb.
+                        Kept in DOM as sr-only for crawlers, AI, and screen readers. */}
+                    <span className="sr-only">{w.title}</span>
                     <div className="replay-badge">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                       🔒 Free Access
