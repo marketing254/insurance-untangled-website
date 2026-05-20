@@ -225,7 +225,7 @@ export default async function PartnerProfile({
                 )}
                 <Link
                   href="/contact/"
-                  className="btn-outline"
+                  className="btn-outline-light"
                   style={{
                     width: "100%",
                     justifyContent: "center",
