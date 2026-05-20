@@ -156,6 +156,27 @@ export async function getReviews(): Promise<Review[]> {
   return rows.filter((r) => r.reviewer_name && r.review_text) as unknown as Review[];
 }
 
+export interface Partner {
+  name: string;
+  title: string;
+  bio: string;
+  image_url: string;
+  more_info: string;
+}
+
+export async function getPartners(): Promise<Partner[]> {
+  const rows = await fetchSheet('Partners');
+  return rows.filter((r) => r.name && r.name.trim()) as unknown as Partner[];
+}
+
+export function partnerSlug(partner: Pick<Partner, 'name'>): string {
+  return partner.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 60);
+}
+
 export interface BlogPost {
   title: string;
   slug: string;

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getPodcasts, getWebinars, podcastSlug, webinarSlug } from "@/lib/sheets";
+import { getPodcasts, getWebinars, getPartners, podcastSlug, webinarSlug, partnerSlug } from "@/lib/sheets";
 import { getStaticBlogs } from "@/data/static-blogs";
 
 export const dynamic = "force-static";
@@ -65,5 +65,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...podcastPages, ...webinarPages, ...blogPages];
+  // Dynamic partner profile pages
+  const partners = await getPartners();
+  const partnerPages = partners.map((p) => ({
+    url: `${baseUrl}/partners/${partnerSlug(p)}/`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
+  return [...staticPages, ...podcastPages, ...webinarPages, ...blogPages, ...partnerPages];
 }
