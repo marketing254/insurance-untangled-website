@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
-import { driveImageUrl } from "@/lib/sheets";
+import { driveImageUrl, webinarSlug as sharedWebinarSlug } from "@/lib/sheets";
 
 const GATE_KEY = "iu_podcast_unlocked";
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
@@ -76,8 +76,10 @@ interface WebinarRow {
   image_url: string;
 }
 
+// Delegate to the single shared implementation in lib/sheets so cards and
+// generateStaticParams always produce identical slugs (otherwise: live 404s).
 function webinarSlug(w: WebinarRow): string {
-  return w.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+  return sharedWebinarSlug(w as unknown as import("@/lib/sheets").Webinar);
 }
 
 export function UpcomingEvents({ initialEvents }: { initialEvents: EventRow[] }) {
