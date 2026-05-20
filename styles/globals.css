@@ -1473,7 +1473,11 @@ footer {
   border-radius: var(--r-md);
   overflow: hidden;
   min-height: 320px;
+  text-decoration: none;
+  color: inherit;
 }
+.h2-offer, .h2-offer:hover, .h2-offer:focus, .h2-offer:visited, .h2-offer:active { text-decoration: none; }
+.h2-offer * { text-decoration: none; }
 .h2-offer:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(11,37,69,.2); }
 .h2-offer-featured { }
 .h2-offer-featured:hover { }
