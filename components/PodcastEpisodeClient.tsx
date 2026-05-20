@@ -9,7 +9,7 @@ import { buildPodcastTranscript, type PodcastTranscript } from "@/lib/transcript
 const GATE_KEY = "iu_podcast_unlocked";
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxcLEGqzCFAm55kZXMH4zwb4iheOgfMmEPuMHxNGvFETz-fvJd2bhKMXLW-Rq8YPqSfcw/exec";
+  "https://script.google.com/macros/s/AKfycbxJ26_n4we-gHF8djhI2a1n85DoWdghG5-r0JcTdDCRkE_6FvVMZQeTT0ACY_PZA7RmKg/exec";
 
 const TRANSCRIPT_ENDPOINT = APPS_SCRIPT_URL;
 
