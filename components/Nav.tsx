@@ -10,7 +10,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/podcast/", label: "Podcast" },
   { href: "/events/", label: "Events" },
   { href: "/ppo-negotiation/", label: "PPO Negotiation" },
-  { href: "/dental-marketing/", label: "Dental Marketing", cta: true },
+  { href: "/msm/", label: "Dental Marketing", cta: true },
   { href: "/blog/", label: "Blog" },
   { href: "/resources/", label: "Resources", optHide: true },
   { href: "/reviews/", label: "Reviews", optHide: true },

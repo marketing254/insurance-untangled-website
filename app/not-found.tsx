@@ -64,7 +64,7 @@ export default function NotFound() {
             {[
               { href: "/ppo-scorecard/", label: "PPO Readiness Scorecard" },
               { href: "/ppo-negotiation/", label: "PPO Negotiation Service" },
-              { href: "/dental-marketing/", label: "Dental Marketing" },
+              { href: "/msm/", label: "Dental Marketing" },
               { href: "/case-studies/", label: "Case Studies" },
               { href: "/faq/", label: "FAQ" },
               { href: "/contact/", label: "Contact Us" },

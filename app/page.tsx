@@ -44,7 +44,7 @@ export default async function Home() {
             </h1>
             <p className="h2-hero-sub reveal reveal-d1">Insurance Untangled cuts through the confusion of dental PPOs &mdash; helping dentists negotiate better reimbursements, understand their plans, and build a practice that works with insurance rather than against it.</p>
             <div className="h2-hero-actions reveal reveal-d2">
-              <Link href="/dental-marketing/" className="h2-btn-primary">Book Free Marketing Consult</Link>
+              <Link href="/msm/" className="h2-btn-primary">Book Free Marketing Consult</Link>
               <Link href="/podcast/" className="h2-btn-ghost-hero">
                 Browse 137 episodes
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
@@ -187,7 +187,7 @@ export default async function Home() {
               </div>
             </Link>
 
-            <Link href="/dental-marketing/" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=70&auto=format&fit=crop')" }}>
+            <Link href="/msm/" className="h2-offer h2-offer-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=70&auto=format&fit=crop')" }}>
               <div className="h2-offer-num">03</div>
               <div className="h2-offer-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /><line x1="2" y1="20" x2="22" y2="20" /></svg>
@@ -403,7 +403,7 @@ export default async function Home() {
             </article>
           </div>
           <div style={{ textAlign: "center", marginTop: "2rem" }} className="reveal">
-            <Link href="/dental-marketing/" className="btn-primary" style={{ display: "inline-block", fontSize: ".95rem", padding: ".85rem 2rem" }}>Book a Strategy Meeting &rarr;</Link>
+            <Link href="/msm/" className="btn-primary" style={{ display: "inline-block", fontSize: ".95rem", padding: ".85rem 2rem" }}>Book a Strategy Meeting &rarr;</Link>
           </div>
           <div className="h2-review-trust reveal" style={{ marginTop: "1.5rem" }}>
             <span className="h2-review-trust-stars" aria-hidden="true">★★★★★</span>
@@ -687,7 +687,7 @@ export default async function Home() {
               <p style={{ fontSize: "15.5px", color: "var(--ink-3)", maxWidth: "500px" }}>Book a free consultation with Ekwa Marketing and get a clear picture of where your practice stands &mdash; and what steps will make the biggest difference.</p>
             </div>
             <div className="h2-cta-action reveal-right">
-              <Link href="/dental-marketing/" className="h2-btn-primary h2-btn-xl">Book Your Free Consultation &rarr;</Link>
+              <Link href="/msm/" className="h2-btn-primary h2-btn-xl">Book Your Free Consultation &rarr;</Link>
               <Link href="/ppo-scorecard/" className="h2-btn-ghost" style={{ marginTop: ".75rem", fontSize: "13px", justifyContent: "center" }}>
                 Or take the free PPO Readiness Scorecard first &rarr;
               </Link>

@@ -71,7 +71,7 @@ export default function About() {
                 </div>
                 <p className="founder-bio-text">Naren Arulrajah is a self-described &ldquo;serial entrepreneur&rdquo; who has spent his career empowering independent professionals &mdash; dentists, doctors, lawyers, and consultants &mdash; to achieve real practice success through smarter digital marketing. As the visionary founder and CEO of Ekwa Marketing, he leads a global team of experts serving over 200 clients at every stage of practice growth.</p>
                 <div className="founder-quote">&ldquo;I consider myself an Imagineer on a mission to deliver out-of-the-box digital marketing solutions for doctors, which others are not even contemplating.&rdquo;</div>
-                <Link href="/dental-marketing/" className="btn-outline">About Ekwa Marketing &rarr;</Link>
+                <Link href="/msm/" className="btn-outline">About Ekwa Marketing &rarr;</Link>
               </div>
             </div>
             <div className="founder-bio-card reveal-scale">

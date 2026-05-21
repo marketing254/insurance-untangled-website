@@ -23,7 +23,7 @@ export default function Contact() {
               <div className="cqb-label">Most popular</div>
               <div className="cqb-title">Book a Free Strategy Call</div>
               <div className="cqb-sub">15 min &bull; No obligation &bull; We&rsquo;ll review your practice first</div>
-              <Link href="/dental-marketing/" className="cqb-btn">Book Now &rarr;</Link>
+              <Link href="/msm/" className="cqb-btn">Book Now &rarr;</Link>
             </div>
             <div className="cqb-alt">
               <a href="https://wa.me/13157435373" target="_blank" rel="noopener noreferrer" className="cqb-alt-link">
@@ -58,7 +58,7 @@ export default function Contact() {
                 <div className="sec-eyebrow" style={{ marginBottom: ".5rem" }}>Free consultation</div>
                 <div style={{ fontFamily: "var(--serif)", fontSize: "1.1rem", fontWeight: 700, color: "var(--ink)", marginBottom: ".5rem" }}>Prefer to talk strategy?</div>
                 <p style={{ fontSize: "13px", color: "var(--ink-3)", marginBottom: "1rem" }}>Book a free marketing strategy meeting with Lila from Ekwa and get a personalized growth plan for your practice.</p>
-                <Link href="/dental-marketing/" className="btn-primary">Book Free Strategy Meeting &rarr;</Link>
+                <Link href="/msm/" className="btn-primary">Book Free Strategy Meeting &rarr;</Link>
               </div>
             </div>
           </div>

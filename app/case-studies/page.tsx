@@ -196,7 +196,7 @@ export default function CaseStudiesPage() {
 
                     <div style={{ marginTop: "1.5rem", paddingTop: "1.25rem", borderTop: "1px solid var(--paper-3)" }}>
                       <Link
-                        href={cs.service === "ppo-negotiation" ? "/ppo-negotiation/" : "/dental-marketing/"}
+                        href={cs.service === "ppo-negotiation" ? "/ppo-negotiation/" : "/msm/"}
                         style={{ fontFamily: "var(--mono)", fontSize: "12px", fontWeight: 600, color: "var(--steel)", textDecoration: "none", letterSpacing: ".04em" }}
                       >
                         {cs.service === "ppo-negotiation" ? "Learn about PPO Negotiation →" : "Learn about Dental Marketing →"}

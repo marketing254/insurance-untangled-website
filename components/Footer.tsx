@@ -35,7 +35,7 @@ export default function Footer() {
             <div className="fc-title">Services</div>
             <ul className="fc-links">
               <li><Link href="/ppo-negotiation/">PPO Negotiation</Link></li>
-              <li><Link href="/dental-marketing/">Dental Marketing</Link></li>
+              <li><Link href="/msm/">Dental Marketing</Link></li>
               <li><Link href="/contact/">Free Consultation</Link></li>
             </ul>
           </div>

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Dental Marketing by Ekwa Marketing",
   description:
     "Attract patients who choose you - not just whoever takes their insurance. Ekwa Marketing helps dental practices rank higher, convert more visitors, and grow.",
-  alternates: { canonical: "https://www.insuranceuntangled.com/dental-marketing/" },
+  alternates: { canonical: "https://www.insuranceuntangled.com/msm/" },
 };
 
 export default function DentalMarketing() {

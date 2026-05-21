@@ -8,11 +8,11 @@ const PopupBanner  = dynamic(() => import("@/components/PopupBanner"),  { ssr: f
 const CookieBanner = dynamic(() => import("@/components/CookieBanner"), { ssr: false });
 
 // Pages where promo popups (EmailPopup + PopupBanner) should NOT appear.
-// The booking flow on /dental-marketing/ + the gated scorecard already have
+// The booking flow on /msm/ + the gated scorecard already have
 // their own conversion goals — extra popups would compete and distract.
 // CookieBanner ALWAYS shows (GDPR requirement).
 const POPUP_BLOCKED_PATHS = [
-  "/dental-marketing",
+  "/msm",
   "/ppo-scorecard",
   "/thank-you",
   "/data-request",

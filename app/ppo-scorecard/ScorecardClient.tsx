@@ -646,7 +646,7 @@ export default function ScorecardClient() {
               <h3 className="sc-cta-title">{tier.ctaTitle}</h3>
               <p className="sc-cta-sub">{tier.ctaSub}</p>
               <div className="sc-cta-btns">
-                <Link href="/dental-marketing/" className="sc-cta-primary">
+                <Link href="/msm/" className="sc-cta-primary">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <rect x="3" y="4" width="18" height="18" rx="2" />
                     <line x1="16" y1="2" x2="16" y2="6" />
