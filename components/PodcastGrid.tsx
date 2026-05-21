@@ -39,6 +39,14 @@ function titleSlug(ep: Episode): string {
   return `${num}-${slug}`;
 }
 
+// Episodes 1–135 had the title baked into their poster image. From 136 onward
+// the artwork is generic, so the title + episode number need to render as
+// visible text on the card rather than as an sr-only span.
+const VISIBLE_TITLE_FROM_EP = 136;
+function shouldShowVisibleTitle(epNum: string): boolean {
+  return (parseInt(epNum) || 0) >= VISIBLE_TITLE_FROM_EP;
+}
+
 function categoryColor(cat: string): { bg: string; color: string } {
   const c = (cat || "").toLowerCase();
   if (c.includes("market")) return { bg: "var(--gold-pale)", color: "#8a6010" };
@@ -203,9 +211,14 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
           <GateForm episodeTitle={`Ep ${ep.episode}: ${ep.title}`} onUnlock={() => handleUnlock(slug)} />
         ) : (
           <div className="ep-card-body">
-            {/* Title visually hidden — poster image already shows it.
-                Kept in DOM as sr-only span so crawlers, AI, and screen readers still read it. */}
-            <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
+            {shouldShowVisibleTitle(ep.episode) ? (
+              <>
+                <div className="ep-card-num">Episode {ep.episode}</div>
+                <div className="ep-card-name">{ep.title}</div>
+              </>
+            ) : (
+              <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
+            )}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".4rem" }}>
               <span className="ep-card-tag" style={{ background: bg, color }}>{ep.category || "Episode"}</span>
               <span style={{ fontFamily: "var(--mono)", fontSize: "9.5px", color: "var(--ink-4)", letterSpacing: ".04em" }}>
@@ -259,7 +272,14 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
                   )}
                 </div>
                 <div className="ep-card-body">
-                  <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
+                  {shouldShowVisibleTitle(ep.episode) ? (
+                    <>
+                      <div className="ep-card-num">Episode {ep.episode}</div>
+                      <div className="ep-card-name">{ep.title}</div>
+                    </>
+                  ) : (
+                    <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
+                  )}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".4rem" }}>
                     <span className="ep-card-tag" style={{ ...categoryColor(ep.category) }}>{ep.category || "Episode"}</span>
                     <span style={{ fontFamily: "var(--mono)", fontSize: "9.5px", color: "var(--teal)", fontWeight: 700, letterSpacing: ".06em" }}>▶ Listen</span>

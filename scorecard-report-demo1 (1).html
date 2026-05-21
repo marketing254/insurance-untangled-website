@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPO Scorecard Report — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Manrope:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B2545;--navy-mid:#13315C;--navy-lt:#1B4965;
+  --teal:#0EA5A0;--teal-lt:#14C6C0;
+  --gold:#E8AA42;--gold-lt:#F0C36D;
+  --cream:#FAF8F5;--white:#fff;
+  --gray-100:#F4F3F1;--gray-200:#E8E6E3;--gray-400:#A09C97;--gray-600:#6B6660;--gray-800:#3D3833;
+  --red:#E85D5D;--amber:#E8AA42;--green:#3EBD8A;--green-strong:#1E9E6B;
+  --serif:"Playfair Display",Georgia,serif;
+  --sans:"Manrope",system-ui,sans-serif;
+  --mono:"DM Mono","Courier New",monospace;
+}
+
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:#1a1a2e;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem;-webkit-font-smoothing:antialiased}
+
+/* ── DEMO SHELL ─────────────────────────────────────────────── */
+.demo-shell{width:100%;max-width:1100px}
+.demo-header{text-align:center;padding:2.5rem 0 2rem}
+.demo-badge{display:inline-flex;align-items:center;gap:.45rem;background:rgba(14,165,160,.15);border:1px solid rgba(14,165,160,.25);color:var(--teal-lt);font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.38rem 1rem;border-radius:20px;margin-bottom:1.25rem}
+.demo-title{font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:.65rem}
+.demo-sub{font-size:15px;color:rgba(255,255,255,.5);line-height:1.65;max-width:520px;margin:0 auto 2rem}
+.demo-controls{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.score-btn{padding:.5rem 1.1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:rgba(255,255,255,.7);font-family:var(--mono);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;letter-spacing:.05em}
+.score-btn:hover,.score-btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.demo-label{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-right:.5rem}
+
+.demo-layout{display:grid;grid-template-columns:340px 1fr;gap:2rem;align-items:start}
+
+/* ── CAPTURE PANEL (left) ───────────────────────────────────── */
+.capture-panel{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35);position:sticky;top:2rem}
+.capture-panel-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:1.75rem;position:relative;overflow:hidden}
+.capture-panel-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(14,165,160,.25) 0%,transparent 70%)}
+.capture-score-ring{width:90px;height:90px;margin:0 auto 1rem;position:relative}
+.capture-score-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:7}
+.ring-fill{fill:none;stroke-width:7;stroke-linecap:round;stroke-dasharray:251;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
+.ring-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-num{font-family:var(--serif);font-size:1.75rem;font-weight:900;color:#fff;line-height:1}
+.ring-of{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--mono)}
+.capture-rating{font-family:var(--serif);font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:.35rem}
+.capture-tagline{font-size:12px;color:rgba(255,255,255,.55);text-align:center;line-height:1.5;position:relative;z-index:1}
+
+.capture-form-body{padding:1.5rem}
+.capture-prompt{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.4rem;line-height:1.3}
+.capture-sub{font-size:12.5px;color:var(--gray-600);line-height:1.55;margin-bottom:1.1rem}
+.cap-perks{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.25rem}
+.cap-perk{display:flex;align-items:flex-start;gap:.5rem;font-size:12px;color:var(--gray-800);line-height:1.45}
+.cap-perk-dot{width:16px;height:16px;background:rgba(14,165,160,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cap-perk-dot svg{width:8px;height:8px}
+.cap-input{width:100%;background:var(--gray-100);border:1.5px solid var(--gray-200);border-radius:8px;padding:.65rem .9rem;font-family:var(--sans);font-size:13.5px;color:var(--gray-800);outline:none;margin-bottom:.55rem;transition:border-color .18s}
+.cap-input:focus{border-color:var(--teal)}
+.cap-submit{width:100%;background:linear-gradient(135deg,var(--teal),#0C8C87);color:#fff;border:none;border-radius:8px;padding:.85rem;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all .25s;box-shadow:0 4px 16px rgba(14,165,160,.3);display:flex;align-items:center;justify-content:center;gap:.5rem;letter-spacing:.02em}
+.cap-submit:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(14,165,160,.4)}
+.cap-submit.sending{opacity:.7;cursor:not-allowed}
+.cap-privacy{font-size:11px;color:var(--gray-400);text-align:center;margin-top:.65rem}
+
+.capture-success{display:none;padding:2rem 1.5rem;text-align:center}
+.success-icon{width:56px;height:56px;background:#d4f5ea;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.success-icon svg{width:28px;height:28px;color:var(--green-strong)}
+.success-title{font-family:var(--serif);font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:.4rem}
+.success-sub{font-size:13px;color:var(--gray-600);line-height:1.6}
+.success-note{margin-top:1rem;font-family:var(--mono);font-size:10.5px;color:var(--gray-400);letter-spacing:.06em;padding:.5rem .75rem;background:var(--gray-100);border-radius:6px}
+
+/* ── EMAIL REPORT (right) ───────────────────────────────────── */
+.report-wrap{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+
+/* Email chrome */
+.email-chrome{background:var(--gray-100);border-bottom:1px solid var(--gray-200);padding:.85rem 1.25rem;display:flex;align-items:center;gap:.75rem}
+.email-dots{display:flex;gap:.4rem}
+.email-dot{width:11px;height:11px;border-radius:50%}
+.email-dot:nth-child(1){background:#ff5f56}
+.email-dot:nth-child(2){background:#ffbd2e}
+.email-dot:nth-child(3){background:#27c93f}
+.email-url{flex:1;background:#fff;border-radius:5px;padding:.3rem .75rem;font-family:var(--mono);font-size:11px;color:var(--gray-400)}
+
+/* Email header */
+.email-meta{background:var(--gray-100);border-bottom:1px solid var(--gray-200);padding:.75rem 1.5rem}
+.email-meta-row{display:flex;gap:.5rem;font-size:12px;margin-bottom:.2rem}
+.email-meta-label{color:var(--gray-400);font-weight:600;min-width:36px}
+.email-meta-val{color:var(--gray-800)}
+
+/* Report body */
+.report-body{padding:0}
+
+.rpt-header{background:linear-gradient(165deg,var(--navy) 0%,var(--navy-mid) 50%,var(--navy-lt) 100%);padding:2.5rem 2.5rem 2rem;position:relative;overflow:hidden}
+.rpt-header::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(14,165,160,.1) 0%,transparent 70%);border-radius:50%}
+.rpt-logo{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:1.5rem;position:relative;z-index:1}
+.rpt-greeting{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:.4rem;position:relative;z-index:1}
+.rpt-headline{font-family:var(--serif);font-size:clamp(1.5rem,3vw,2.1rem);font-weight:900;color:#fff;line-height:1.15;margin-bottom:.5rem;position:relative;z-index:1}
+.rpt-subline{font-size:13.5px;color:rgba(255,255,255,.5);line-height:1.6;max-width:480px;position:relative;z-index:1}
+
+/* Score section */
+.rpt-score-section{display:flex;align-items:center;gap:2rem;padding:2rem 2.5rem;background:#fff;border-bottom:1px solid var(--gray-100)}
+.rpt-ring-wrap{flex-shrink:0;width:110px;height:110px;position:relative}
+.rpt-ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.rpt-ring-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.rpt-score-val{font-family:var(--serif);font-size:2.2rem;font-weight:900;color:var(--navy);line-height:1}
+.rpt-score-of{font-size:11px;color:var(--gray-400);font-family:var(--mono)}
+.rpt-score-info{flex:1}
+.rpt-score-rating{font-family:var(--serif);font-size:1.4rem;font-weight:700;margin-bottom:.4rem}
+.rpt-score-tagline{font-size:13.5px;color:var(--gray-600);line-height:1.6}
+.rpt-score-date{font-family:var(--mono);font-size:10.5px;color:var(--gray-400);margin-top:.6rem;letter-spacing:.05em}
+
+/* Dimension breakdown */
+.rpt-section{padding:1.75rem 2.5rem;border-bottom:1px solid var(--gray-100)}
+.rpt-section-title{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gray-400);margin-bottom:1.25rem}
+.dim-row{display:flex;align-items:center;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--gray-100)}
+.dim-row:last-child{border-bottom:none}
+.dim-name{font-size:13px;font-weight:600;color:var(--gray-800);width:180px;flex-shrink:0}
+.dim-bar-wrap{flex:1;height:8px;background:var(--gray-200);border-radius:10px;overflow:hidden}
+.dim-bar{height:100%;border-radius:10px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.dim-score-lbl{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--gray-600);min-width:32px;text-align:right}
+
+/* Narrative */
+.rpt-narrative{padding:1.75rem 2.5rem;border-bottom:1px solid var(--gray-100);background:linear-gradient(135deg,rgba(14,165,160,.04),rgba(232,170,66,.04))}
+.rpt-narrative-text{font-size:14px;color:var(--gray-800);line-height:1.75}
+.rpt-narrative-text strong{color:var(--navy);font-weight:700}
+
+/* Next steps */
+.rpt-steps{padding:1.75rem 2.5rem;border-bottom:1px solid var(--gray-100)}
+.step-item{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.1rem}
+.step-item:last-child{margin-bottom:0}
+.step-num{width:28px;height:28px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px}
+.step-body{}
+.step-title{font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:.25rem}
+.step-desc{font-size:13px;color:var(--gray-600);line-height:1.6}
+
+/* Episode rec */
+.rpt-episodes{padding:1.75rem 2.5rem;border-bottom:1px solid var(--gray-100)}
+.ep-rec{display:flex;align-items:flex-start;gap:.85rem;padding:.75rem 0;border-bottom:1px solid var(--gray-100)}
+.ep-rec:last-child{border-bottom:none}
+.ep-rec-num{font-family:var(--mono);font-size:10px;color:var(--teal);font-weight:700;min-width:36px;letter-spacing:.06em;margin-top:2px}
+.ep-rec-title{font-size:13px;font-weight:600;color:var(--navy);line-height:1.4;margin-bottom:.15rem}
+.ep-rec-why{font-size:12px;color:var(--gray-400);line-height:1.4}
+
+/* CTA footer */
+.rpt-cta{padding:2rem 2.5rem;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);text-align:center}
+.rpt-cta-title{font-family:var(--serif);font-size:1.25rem;font-weight:700;color:#fff;margin-bottom:.4rem}
+.rpt-cta-sub{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:1.25rem;line-height:1.6}
+.rpt-cta-btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.rpt-btn-primary{display:inline-flex;align-items:center;gap:.4rem;background:var(--teal);color:#fff;padding:.65rem 1.4rem;border-radius:8px;font-size:13.5px;font-weight:700;text-decoration:none;transition:all .2s;border:none;cursor:pointer;font-family:var(--sans)}
+.rpt-btn-primary:hover{background:var(--teal-lt);transform:translateY(-1px)}
+.rpt-btn-secondary{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2);padding:.65rem 1.4rem;border-radius:8px;font-size:13.5px;font-weight:600;text-decoration:none;transition:all .2s;font-family:var(--sans)}
+.rpt-btn-secondary:hover{background:rgba(255,255,255,.18)}
+
+/* Email footer */
+.rpt-footer{padding:1.25rem 2.5rem;text-align:center}
+.rpt-footer-logos{font-family:var(--mono);font-size:10.5px;color:var(--gray-400);letter-spacing:.06em;margin-bottom:.4rem}
+.rpt-footer-copy{font-size:11px;color:var(--gray-400)}
+
+/* Sending overlay */
+.sending-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,20,.7);backdrop-filter:blur(6px);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:1rem}
+.sending-overlay.active{display:flex;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.sending-spinner{width:48px;height:48px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sending-text{color:#fff;font-family:var(--mono);font-size:13px;letter-spacing:.08em}
+.sending-steps{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+.send-step{font-size:12px;color:rgba(255,255,255,.45);font-family:var(--mono);letter-spacing:.06em;transition:color .3s}
+.send-step.active{color:var(--teal-lt)}
+.send-step.done{color:rgba(255,255,255,.6)}
+.send-step.done::before{content:'✓ '}
+
+@media(max-width:900px){.demo-layout{grid-template-columns:1fr}.capture-panel{position:static}}
+@media(max-width:600px){.rpt-score-section{flex-direction:column;gap:1rem;text-align:center}.rpt-section,.rpt-narrative,.rpt-steps,.rpt-episodes,.rpt-cta,.rpt-footer{padding:1.25rem 1.25rem}.dim-name{width:130px}.rpt-cta-btns{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="demo-shell">
+
+  <!-- Header -->
+  <div class="demo-header">
+    <div class="demo-badge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Report Demo
+    </div>
+    <h1 class="demo-title">What the dentist receives in their inbox</h1>
+    <p class="demo-sub">Try different score tiers to see how the report personalises. Then fill in the capture form to see the full send flow.</p>
+    <div class="demo-controls">
+      <span class="demo-label">Score tier:</span>
+      <button class="score-btn" onclick="setScore('low')">0–3 Not Ready</button>
+      <button class="score-btn" onclick="setScore('mid')">4–6 Getting Close</button>
+      <button class="score-btn active" onclick="setScore('high')">7–8 Ready to Start</button>
+      <button class="score-btn" onclick="setScore('top')">9–10 Accelerate</button>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="demo-layout">
+
+    <!-- LEFT: Capture panel -->
+    <div class="capture-panel">
+      <div class="capture-panel-header">
+        <div class="capture-score-ring">
+          <svg viewBox="0 0 90 90">
+            <circle class="ring-bg" cx="45" cy="45" r="40"/>
+            <circle class="ring-fill" id="cap-ring" cx="45" cy="45" r="40"/>
+          </svg>
+          <div class="ring-label">
+            <div class="ring-num" id="cap-score-num">7</div>
+            <div class="ring-of">/ 10</div>
+          </div>
+        </div>
+        <div class="capture-rating" id="cap-rating" style="color:var(--teal-lt)">Ready to Start</div>
+        <div class="capture-tagline" id="cap-tagline">You're in a strong position. A strategic, phased approach to PPO reduction could begin now.</div>
+      </div>
+
+      <div class="capture-form-body" id="cap-form-body">
+        <div class="capture-prompt">Get your full personalised report</div>
+        <div class="capture-sub">We'll email you a detailed breakdown with your dimension scores, narrative analysis, and a prioritised action plan.</div>
+        <div class="cap-perks">
+          <div class="cap-perk"><div class="cap-perk-dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0EA5A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Your score + full dimension breakdown</div>
+          <div class="cap-perk"><div class="cap-perk-dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0EA5A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Personalised narrative analysis of your results</div>
+          <div class="cap-perk"><div class="cap-perk-dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0EA5A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>3 prioritised next steps for your practice</div>
+          <div class="cap-perk"><div class="cap-perk-dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0EA5A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Podcast episodes matched to your weakest areas</div>
+        </div>
+        <input type="text"  class="cap-input" id="demo-name"  placeholder="Dr. Jane Smith">
+        <input type="email" class="cap-input" id="demo-email" placeholder="jane@yourpractice.com">
+        <button class="cap-submit" id="cap-submit-btn" onclick="simulateSend()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email Me My Report
+        </button>
+        <div class="cap-privacy">No spam. Unsubscribe any time. We respect your inbox.</div>
+      </div>
+
+      <div class="capture-success" id="cap-success">
+        <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="success-title">Report sent!</div>
+        <p class="success-sub">Check your inbox — your personalised PPO Readiness Report is on its way from <strong>hello@insuranceuntangled.com</strong></p>
+        <div class="success-note">// This is a demo — in production, EmailJS sends the real report automatically</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Email report -->
+    <div class="report-wrap">
+
+      <!-- Email chrome -->
+      <div class="email-chrome">
+        <div class="email-dots">
+          <div class="email-dot"></div>
+          <div class="email-dot"></div>
+          <div class="email-dot"></div>
+        </div>
+        <div class="email-url">📧 Your PPO Readiness Report | Insurance Untangled</div>
+      </div>
+
+      <!-- Email meta -->
+      <div class="email-meta">
+        <div class="email-meta-row"><span class="email-meta-label">From</span><span class="email-meta-val">Insurance Untangled &lt;hello@insuranceuntangled.com&gt;</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">To</span><span class="email-meta-val" id="rpt-to">Dr. Jane Smith &lt;jane@yourpractice.com&gt;</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Re</span><span class="email-meta-val" id="rpt-subject">Your PPO Readiness Report — Score: 7/10 (Ready to Start)</span></div>
+      </div>
+
+      <!-- Report body -->
+      <div class="report-body">
+
+        <div class="rpt-header">
+          <div class="rpt-logo">INSURANCE UNTANGLED &nbsp;·&nbsp; PPO READINESS REPORT</div>
+          <div class="rpt-greeting" id="rpt-greeting">Hi Dr. Smith,</div>
+          <h1 class="rpt-headline" id="rpt-headline">You scored 7 out of 10.<br>You're ready to start.</h1>
+          <p class="rpt-subline" id="rpt-subline">Here's your full breakdown — including where your practice stands across 6 key dimensions and exactly what to prioritise next.</p>
+        </div>
+
+        <!-- Score ring -->
+        <div class="rpt-score-section">
+          <div class="rpt-ring-wrap">
+            <svg viewBox="0 0 110 110">
+              <circle class="ring-bg" cx="55" cy="55" r="46" fill="none" stroke="#E8E6E3" stroke-width="8"/>
+              <circle id="rpt-ring" cx="55" cy="55" r="46" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289" style="transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)" transform="rotate(-90 55 55)"/>
+            </svg>
+            <div class="rpt-ring-label">
+              <div class="rpt-score-val" id="rpt-score-big">7</div>
+              <div class="rpt-score-of">out of 10</div>
+            </div>
+          </div>
+          <div class="rpt-score-info">
+            <div class="rpt-score-rating" id="rpt-rating-lbl" style="color:var(--teal)">Ready to Start</div>
+            <div class="rpt-score-tagline" id="rpt-tagline-lbl">You are in a strong position. A strategic, phased approach to navigating and negotiating your PPO position could begin now with the right guidance.</div>
+            <div class="rpt-score-date">Completed <span id="rpt-date"></span></div>
+          </div>
+        </div>
+
+        <!-- Dimension breakdown -->
+        <div class="rpt-section">
+          <div class="rpt-section-title">Your readiness by dimension</div>
+          <div id="rpt-dims"></div>
+        </div>
+
+        <!-- Narrative -->
+        <div class="rpt-narrative">
+          <div class="rpt-section-title" style="margin-bottom:.75rem">What your results mean</div>
+          <div class="rpt-narrative-text" id="rpt-narrative"></div>
+        </div>
+
+        <!-- Next steps -->
+        <div class="rpt-steps">
+          <div class="rpt-section-title">Your prioritised next steps</div>
+          <div id="rpt-steps-list"></div>
+        </div>
+
+        <!-- Episode recs -->
+        <div class="rpt-episodes">
+          <div class="rpt-section-title">Recommended episodes for your score tier</div>
+          <div id="rpt-episodes"></div>
+        </div>
+
+        <!-- CTA -->
+        <div class="rpt-cta">
+          <div class="rpt-cta-title" id="rpt-cta-title">Ready to move on your results?</div>
+          <div class="rpt-cta-sub" id="rpt-cta-sub">Based on your score, a conversation with our experts could make a real difference to your timeline.</div>
+          <div class="rpt-cta-btns">
+            <a href="https://www.insuranceuntangled.org/msm/" class="rpt-btn-primary" target="_blank" rel="noopener noreferrer">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Book a Free Marketing Consult
+            </a>
+            <a href="https://my-schedule.timetrade.com/app/td-497923/workflows/b9kxn/schedule/welcome" class="rpt-btn-secondary" target="_blank" rel="noopener noreferrer">
+              Talk to Ben at Veritas →
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="rpt-footer">
+          <div class="rpt-footer-logos">Insurance Untangled &nbsp;·&nbsp; Ekwa Marketing &nbsp;·&nbsp; Veritas Dental Resources</div>
+          <div class="rpt-footer-copy">© 2026 Insurance Untangled · 303 Pinetree Way, Mississauga, Ontario · <a href="mailto:support@insuranceuntangled.com" style="color:var(--gray-400)">support@insuranceuntangled.com</a></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Sending overlay -->
+<div class="sending-overlay" id="sending-overlay">
+  <div class="sending-spinner"></div>
+  <div class="sending-text">Sending your report…</div>
+  <div class="sending-steps">
+    <div class="send-step" id="step-1">Compiling your score data</div>
+    <div class="send-step" id="step-2">Building your personalised report</div>
+    <div class="send-step" id="step-3">Sending via EmailJS</div>
+    <div class="send-step" id="step-4">Adding to newsletter list</div>
+  </div>
+</div>
+
+<script>
+const TIERS = {
+  low: {
+    score: 2, label: 'Not Ready Yet', color: '#E85D5D',
+    tagline: 'Your practice needs foundational work before making PPO changes. The good news: now you know exactly where the gaps are.',
+    dims: [
+      { name: 'Financial Awareness',   score: 0, max: 2 },
+      { name: 'Marketing Readiness',   score: 0, max: 2 },
+      { name: 'Operational Readiness', score: 1, max: 2 },
+      { name: 'Insurance Strategy',    score: 0, max: 2 },
+      { name: 'Financial Resilience',  score: 1, max: 1 },
+      { name: 'Strategic Planning',    score: 0, max: 1 },
+    ],
+    narrative: `Your results show a practice that's working hard but flying blind on the insurance side. <strong>You don't yet have a clear picture of what percentage of revenue comes from PPOs</strong>, which makes it difficult to know where to start. The good news: the foundational steps are straightforward and free — and completing them will immediately change how you see your business. Your operational readiness suggests your team can execute once a plan is in place.`,
+    steps: [
+      { title: 'Calculate your PPO revenue percentage', desc: 'Pull a report from your practice management software showing total collections vs. PPO adjustments for the last 12 months. This single number will change how you see your business.' },
+      { title: 'Claim your Google Business Profile', desc: 'Optimise your GBP listing and ask your top 10 patients for a Google review this week. These are free actions that compound over time and reduce dependence on insurance for new patients.' },
+      { title: 'Identify which plans you\'re actually on', desc: 'List every insurance plan you participate in. Many practices discover they\'re in-network with plans they never consciously signed — often through umbrella network clauses.' },
+    ],
+    episodes: [
+      { num: 'Ep 126', title: "Getting Back to the Basics: Why Foundational Marketing Matters", why: 'Recommended for your Marketing Readiness gap', url: 'https://www.insuranceuntangled.com/getting-back-to-the-basics-why-foundational-marketing-matters-for-every-dental-practice/' },
+      { num: 'Ep 133', title: "What Google Really Wants From Your Dental Website in 2026", why: 'Recommended for your Marketing Readiness gap', url: 'https://www.insuranceuntangled.com/what-google-really-wants-from-your-dental-website-in-2026/' },
+      { num: 'Ep 127', title: "Umbrella Network Changes That Will Impact You Tomorrow", why: 'Recommended for your Insurance Strategy gap', url: 'https://www.insuranceuntangled.com/umbrella-network-changes-today-that-will-impact-you-tomorrow/' },
+    ],
+    ctaTitle: 'Your gaps are fixable — let\'s make a plan.',
+    ctaSub: 'A free conversation with Ekwa and Veritas can give you a clear roadmap for the next 90 days.',
+  },
+  mid: {
+    score: 5, label: 'Getting Close', color: '#E8AA42',
+    tagline: 'You have some pieces in place but critical gaps remain. Targeted improvements in 2–3 areas could make you ready within 6 months.',
+    dims: [
+      { name: 'Financial Awareness',   score: 1, max: 2 },
+      { name: 'Marketing Readiness',   score: 1, max: 2 },
+      { name: 'Operational Readiness', score: 1, max: 2 },
+      { name: 'Insurance Strategy',    score: 0, max: 2 },
+      { name: 'Financial Resilience',  score: 1, max: 1 },
+      { name: 'Strategic Planning',    score: 1, max: 1 },
+    ],
+    narrative: `Your results show a practice with solid foundations but <strong>a critical gap in Insurance Strategy</strong> — the area that most directly affects your reimbursements. You have financial awareness and a basic marketing presence, but you haven't negotiated your fees recently and may not fully understand your umbrella network exposure. Closing this single gap would have an outsized impact on your practice economics.`,
+    steps: [
+      { title: 'Audit your PPO contracts for umbrella network clauses', desc: 'Many dentists are unknowingly in-network with plans they never signed. Call each carrier and ask which umbrella networks your contract allows them to lease your fee schedule to.' },
+      { title: 'Negotiate your top 3 PPO plans by patient volume', desc: 'Start with the plans that represent the most chair time. Even a 5–8% fee increase on your top plan can recover thousands per year without dropping any patients.' },
+      { title: 'Get a marketing baseline before your next move', desc: 'If you don\'t know your cost per new patient or call conversion rate, a free Marketing Strategy Meeting with Ekwa can give you that clarity in 90 minutes.' },
+    ],
+    episodes: [
+      { num: 'Ep 128', title: "Creating a PPO Exit Strategy for Your Dental Practice", why: 'Recommended for your Insurance Strategy gap', url: 'https://www.insuranceuntangled.com/creating-a-ppo-exit-strategy-for-your-dental-practice/' },
+      { num: 'Ep 130', title: "Fighting the Culture of Insurance Claim Denials in Dentistry", why: 'Recommended for your Insurance Strategy gap', url: 'https://www.insuranceuntangled.com/fighting-the-culture-of-insurance-claim-denials-in-dentistry/' },
+      { num: 'Ep 121', title: "What's Happening With Out-of-Network Insurance Benefits?", why: 'Recommended for your Financial Awareness score', url: 'https://www.insuranceuntangled.com/whats-happening-with-out-of-network-insurance-benefits/' },
+    ],
+    ctaTitle: 'You\'re closer than you think.',
+    ctaSub: 'Two or three targeted moves could significantly change your practice economics. Let\'s identify them together.',
+  },
+  high: {
+    score: 7, label: 'Ready to Start', color: '#0EA5A0',
+    tagline: 'You are in a strong position. A strategic, phased approach could begin now with the right guidance.',
+    dims: [
+      { name: 'Financial Awareness',   score: 2, max: 2 },
+      { name: 'Marketing Readiness',   score: 1, max: 2 },
+      { name: 'Operational Readiness', score: 2, max: 2 },
+      { name: 'Insurance Strategy',    score: 1, max: 2 },
+      { name: 'Financial Resilience',  score: 1, max: 1 },
+      { name: 'Strategic Planning',    score: 0, max: 1 },
+    ],
+    narrative: `Your results show a practice with <strong>strong financial awareness and operational foundations</strong> — you know your numbers, your team converts well, and you have membership plan infrastructure in place. The two areas holding you back are Insurance Strategy and Strategic Planning: you haven't yet built a written plan for how you want your insurance mix to evolve, and your marketing engine may not yet be strong enough to absorb a significant shift in your patient mix. These are very solvable gaps.`,
+    steps: [
+      { title: 'Rank your PPO plans by profitability', desc: 'List every plan, its reimbursement rates on your top 10 procedure codes, and its patient volume. The bottom 2–3 plans are your first candidates for renegotiation or exit. Veritas can run this analysis for you.' },
+      { title: 'Start the SEO engine now', desc: 'SEO takes 3–6 months to mature. Every week you delay is a week of compounding growth you lose on the other side. Book a free session with Ekwa to see where your current online presence stands.' },
+      { title: 'Write your 12-month insurance roadmap', desc: 'A written plan — even one page — with specific dates for which plans you\'ll negotiate and when, dramatically increases the chance of follow-through. Schedule this as a half-day exercise with your office manager.' },
+    ],
+    episodes: [
+      { num: 'Ep 129', title: "Do Dentists Really Have to Stay Trapped by PPOs?", why: 'Recommended for your Strategic Planning gap', url: 'https://www.insuranceuntangled.com/do-dentists-really-have-to-stay-trapped-by-ppos/' },
+      { num: 'Ep 128', title: "Creating a PPO Exit Strategy for Your Dental Practice", why: 'Recommended for your Strategic Planning gap', url: 'https://www.insuranceuntangled.com/creating-a-ppo-exit-strategy-for-your-dental-practice/' },
+      { num: 'Ep 125', title: "Spending Time Building Patient Relationships Reduces PPO Reliance", why: 'Recommended for your Marketing Readiness score', url: 'https://www.insuranceuntangled.com/spending-time-building-relationships-with-patients-can-help-you-reduce-your-dependence-on-ppos/' },
+    ],
+    ctaTitle: 'You\'re ready. Let\'s build the plan.',
+    ctaSub: 'At your level, expert guidance can compress your timeline significantly. A call with Ben at Veritas is your best next step.',
+  },
+  top: {
+    score: 9, label: 'Ready to Accelerate', color: '#1E9E6B',
+    tagline: 'You have the infrastructure in place. The question is not if you should act, but how fast you can move with expert guidance.',
+    dims: [
+      { name: 'Financial Awareness',   score: 2, max: 2 },
+      { name: 'Marketing Readiness',   score: 2, max: 2 },
+      { name: 'Operational Readiness', score: 2, max: 2 },
+      { name: 'Insurance Strategy',    score: 2, max: 2 },
+      { name: 'Financial Resilience',  score: 1, max: 1 },
+      { name: 'Strategic Planning',    score: 0, max: 1 },
+    ],
+    narrative: `Your results are exceptional. <strong>You have near-perfect scores across Financial Awareness, Marketing Readiness, Operational Readiness, and Insurance Strategy</strong> — this is a practice that understands its numbers, converts patients well, has alternatives to insurance in place, and knows its contracts. The only gap is Strategic Planning: you don't yet have a written, time-bound plan. At your level of readiness, this is the one thing standing between you and meaningful action.`,
+    steps: [
+      { title: 'Build your 90-day PPO action timeline', desc: 'Identify which plans to renegotiate and which to exit, in what order, with specific dates. Start with the least profitable by patient volume — this minimises disruption and builds confidence.' },
+      { title: 'Pressure-test your marketing before you start', desc: 'Before you drop or renegotiate any plans, confirm your digital presence can absorb the transition. Ekwa can give you a live analysis of your current new patient acquisition capacity in one free session.' },
+      { title: 'Schedule a strategy call with Ben Tuinei at Veritas', desc: 'At your readiness level, Ben can help you design a precise, phased strategy that protects revenue through the transition. His firm has done this for hundreds of practices and the results speak for themselves.' },
+    ],
+    episodes: [
+      { num: 'Ep 137', title: "Why Doing “More” Isn’t the Answer — Doing the Right Things Is!", why: 'Directly relevant to your stage of readiness', url: 'https://www.insuranceuntangled.com/why-doing-more-isnt-the-answer-doing-the-right-things-is/' },
+      { num: 'Ep 131', title: "How to Get Patients to Stay With Your Practice for Life", why: 'As you expand your fee-for-service base', url: 'https://www.insuranceuntangled.com/how-to-get-patients-to-stay-with-your-dental-practice-for-life/' },
+      { num: 'Ep 134', title: "Why Your Schedule Controls You and How to Change That", why: 'For your Strategic Planning gap', url: 'https://www.insuranceuntangled.com/why-your-schedule-controls-you-and-how-to-change-that/' },
+    ],
+    ctaTitle: 'You\'re at the starting line. Let\'s go.',
+    ctaSub: 'Your practice is ready. The only missing piece is a precise execution plan — and we can help you build one.',
+  },
+};
+
+let currentTier = 'high';
+
+function setScore(tier) {
+  currentTier = tier;
+  document.querySelectorAll('.score-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderReport(tier);
+}
+
+function renderReport(tier) {
+  const d = TIERS[tier];
+  const circumference_cap = 2 * Math.PI * 40;
+  const circumference_rpt = 2 * Math.PI * 46;
+
+  // Capture panel
+  document.getElementById('cap-ring').style.stroke = d.color;
+  document.getElementById('cap-ring').style.strokeDasharray = circumference_cap;
+  document.getElementById('cap-ring').style.strokeDashoffset = circumference_cap - (d.score / 10) * circumference_cap;
+  document.getElementById('cap-score-num').textContent = d.score;
+  document.getElementById('cap-rating').textContent = d.label;
+  document.getElementById('cap-rating').style.color = d.color;
+  document.getElementById('cap-tagline').textContent = d.tagline;
+
+  // Report ring
+  const rptRing = document.getElementById('rpt-ring');
+  rptRing.style.stroke = d.color;
+  setTimeout(() => {
+    rptRing.style.strokeDashoffset = circumference_rpt - (d.score / 10) * circumference_rpt;
+  }, 100);
+  document.getElementById('rpt-score-big').textContent = d.score;
+  document.getElementById('rpt-rating-lbl').textContent = d.label;
+  document.getElementById('rpt-rating-lbl').style.color = d.color;
+  document.getElementById('rpt-tagline-lbl').textContent = d.tagline;
+  document.getElementById('rpt-headline').innerHTML = `You scored ${d.score} out of 10.<br>You're ${d.label.toLowerCase()}.`;
+  document.getElementById('rpt-subject').textContent = `Your PPO Readiness Report — Score: ${d.score}/10 (${d.label})`;
+
+  // Date
+  const now = new Date();
+  document.getElementById('rpt-date').textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  // Dimensions
+  const dimsEl = document.getElementById('rpt-dims');
+  dimsEl.innerHTML = '';
+  d.dims.forEach(dim => {
+    const pct = Math.round((dim.score / dim.max) * 100);
+    const barColor = pct === 100 ? '#1E9E6B' : pct >= 50 ? d.color : '#E85D5D';
+    dimsEl.innerHTML += `
+      <div class="dim-row">
+        <div class="dim-name">${dim.name}</div>
+        <div class="dim-bar-wrap"><div class="dim-bar" style="width:${pct}%;background:${barColor}"></div></div>
+        <div class="dim-score-lbl">${dim.score}/${dim.max}</div>
+      </div>`;
+  });
+
+  // Narrative
+  document.getElementById('rpt-narrative').innerHTML = d.narrative;
+
+  // Steps
+  const stepsEl = document.getElementById('rpt-steps-list');
+  stepsEl.innerHTML = '';
+  d.steps.forEach((step, i) => {
+    stepsEl.innerHTML += `
+      <div class="step-item">
+        <div class="step-num">${i+1}</div>
+        <div class="step-body">
+          <div class="step-title">${step.title}</div>
+          <div class="step-desc">${step.desc}</div>
+        </div>
+      </div>`;
+  });
+
+  // Episodes
+  const epsEl = document.getElementById('rpt-episodes');
+  epsEl.innerHTML = '';
+  d.episodes.forEach(ep => {
+    var epUrl = ep.url || 'https://www.insuranceuntangled.com/podcast-show/';
+    epsEl.innerHTML += `
+      <div class="ep-rec">
+        <div class="ep-rec-num">${ep.num}</div>
+        <div>
+          <a class="ep-rec-title" href="${epUrl}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;display:block">${ep.title} <span style="color:var(--teal);font-size:11px">→</span></a>
+          <div class="ep-rec-why">${ep.why}</div>
+        </div>
+      </div>`;
+  });
+
+  // CTA
+  document.getElementById('rpt-cta-title').textContent = d.ctaTitle;
+  document.getElementById('rpt-cta-sub').textContent  = d.ctaSub;
+
+  // Subline in header
+  document.getElementById('rpt-subline').textContent = `Here's your full breakdown — including where your practice stands across 6 key dimensions and exactly what to prioritise next.`;
+}
+
+function simulateSend() {
+  const name  = document.getElementById('demo-name').value.trim();
+  const email = document.getElementById('demo-email').value.trim();
+
+  document.getElementById('demo-email').style.borderColor = '';
+  document.getElementById('demo-name').style.borderColor  = '';
+
+  if (!name)                        { document.getElementById('demo-name').style.borderColor  = '#E85D5D'; return; }
+  if (!email || !email.includes('@')){ document.getElementById('demo-email').style.borderColor = '#E85D5D'; return; }
+
+  // Update report personalisation
+  const firstName = name.replace(/^Dr\.?\s*/i,'').split(' ')[0];
+  document.getElementById('rpt-greeting').textContent = `Hi ${name},`;
+  document.getElementById('rpt-to').textContent = `${name} <${email}>`;
+
+  // Show overlay
+  const overlay = document.getElementById('sending-overlay');
+  overlay.classList.add('active');
+
+  const steps = ['step-1','step-2','step-3','step-4'];
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i > 0) {
+      document.getElementById(steps[i-1]).classList.remove('active');
+      document.getElementById(steps[i-1]).classList.add('done');
+    }
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        document.getElementById('cap-form-body').style.display = 'none';
+        document.getElementById('cap-success').style.display = 'block';
+        steps.forEach(s => {
+          document.getElementById(s).classList.remove('active','done');
+        });
+        // Scroll report into view
+        document.querySelector('.report-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 600);
+    }
+  }, 900);
+}
+
+// Init
+renderReport('high');
+setTimeout(() => {
+  const rptRing = document.getElementById('rpt-ring');
+  const d = TIERS['high'];
+  const circumference_rpt = 2 * Math.PI * 46;
+  rptRing.style.strokeDashoffset = circumference_rpt - (d.score / 10) * circumference_rpt;
+}, 300);
+</script>
+</body>
+</html>
