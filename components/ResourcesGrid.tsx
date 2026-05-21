@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJ26_n4we-gHF8djhI2a1n85DoWdghG5-r0JcTdDCRkE_6FvVMZQeTT0ACY_PZA7RmKg/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRI5Yq-07jqisMQTGS9uglC0EyBrAlxRzqJHl0FyL-0XUL7LhZ7TTfKRtbjqZ4MwXiHA/exec";
 
 type ResType = "ep-guide" | "ebook" | "tool";
 
