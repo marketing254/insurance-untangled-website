@@ -153,7 +153,12 @@ function parsePlainLine(line: string, guestName?: string): TranscriptEntry | nul
     };
   }
 
-  const timeOnly = line.match(/^\[?(\d{1,2}:\d{2}(?::\d{2})?)\]?\s+(.+)$/);
+  // Timestamp-led line. Accept any of:
+  //   [01:23] text           — square brackets
+  //   01:23  text            — pure whitespace separator
+  //   0:04: Are you looking… — timestamp followed by a colon (our episode 137 doc uses this)
+  //   1:11 - Welcome…        — dash separator
+  const timeOnly = line.match(/^\[?(\d{1,2}:\d{2}(?::\d{2})?)\]?\s*[:.\-–—]?\s+(.+)$/);
   if (timeOnly) {
     return {
       speaker: "",
