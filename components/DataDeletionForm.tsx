@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxn4Y9qgVCrIuBgExfGT_ZbY-OZD43uz4OzfOll05wwUUYQRrDsv5u3v10CEZbxCKVpfg/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec";
 
 export default function DataDeletionForm() {
   const [email, setEmail] = useState("");
