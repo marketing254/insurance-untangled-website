@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ReactDOM from "react-dom";
 import CounterAnimation from "@/components/CounterAnimation";
 import NewsletterForm from "@/components/NewsletterForm";
 import { getUpcomingEvents } from "@/lib/sheets";
@@ -25,6 +26,12 @@ export default async function Home() {
   const events = await getUpcomingEvents();
   const today = new Date().toISOString().split("T")[0];
   const nextEvent = events.find((e) => e.date_iso >= today);
+
+  // Preload the LCP hero image — homepage only.
+  // Replaces the global <link rel="preload"> that used to live in layout.tsx
+  // (which fired on every route and triggered "preloaded but not used" warnings).
+  ReactDOM.preload("/images/hero-yarn.png", { as: "image", fetchPriority: "high" });
+
   return (
     <>
       {/* Hero */}

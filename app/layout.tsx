@@ -69,8 +69,9 @@ export default function RootLayout({
           title="Insurance Untangled Podcast"
           href="https://feeds.libsyn.com/insurance-untangled"
         />
-        {/* Preload LCP image — hero yarn is the painted LCP element on homepage */}
-        <link rel="preload" as="image" href="/images/hero-yarn.png" fetchPriority="high" />
+        {/* LCP-image preload lives in the homepage component (app/page.tsx)
+            via ReactDOM.preload() — preloading it globally caused
+            "preloaded but not used" warnings on every other route. */}
         {/* Preconnect for Unsplash CDN used in CSS background-images */}
         <link rel="preconnect" href="https://images.unsplash.com" />
 
