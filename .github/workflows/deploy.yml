@@ -35,6 +35,9 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          # Pulled from repo Variables (Settings → Secrets and variables → Actions → Variables)
+          NEXT_PUBLIC_GA4_ID: ${{ vars.NEXT_PUBLIC_GA4_ID }}
         run: npx next build
 
       - name: Upload artifact
