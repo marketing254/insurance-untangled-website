@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 const FORM_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbxRI5Yq-07jqisMQTGS9uglC0EyBrAlxRzqJHl0FyL-0XUL7LhZ7TTfKRtbjqZ4MwXiHA/exec";
+  "https://script.google.com/macros/s/AKfycbxn4Y9qgVCrIuBgExfGT_ZbY-OZD43uz4OzfOll05wwUUYQRrDsv5u3v10CEZbxCKVpfg/exec";
 
 const DISPOSABLE_EMAIL_DOMAINS = new Set([
   "mailinator.com", "guerrillamail.com", "10minutemail.com", "tempmail.com", "trashmail.com",

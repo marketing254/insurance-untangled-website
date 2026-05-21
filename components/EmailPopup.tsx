@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
-const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbxRI5Yq-07jqisMQTGS9uglC0EyBrAlxRzqJHl0FyL-0XUL7LhZ7TTfKRtbjqZ4MwXiHA/exec"; // Paste your deployed Apps Script URL here
+const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbxn4Y9qgVCrIuBgExfGT_ZbY-OZD43uz4OzfOll05wwUUYQRrDsv5u3v10CEZbxCKVpfg/exec"; // Paste your deployed Apps Script URL here
 
 const ALLOWED_PATHS = ["/", "/podcast", "/events"];
 
