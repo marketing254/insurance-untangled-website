@@ -45,6 +45,42 @@ export default function PPOScorecardPage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "HowTo",
+            name: "How to assess your dental practice's PPO readiness",
+            description: "A free 2-minute self-assessment that scores your dental practice across 6 PPO readiness dimensions and returns personalised next steps and podcast recommendations.",
+            totalTime: "PT2M",
+            tool: { "@type": "HowToTool", name: "PPO Readiness Scorecard" },
+            step: [
+              {
+                "@type": "HowToStep",
+                position: 1,
+                name: "Answer 10 yes/no questions",
+                text: "Respond to 10 quick yes/no questions covering your finances, marketing, operations, insurance strategy, financial resilience, and strategic planning.",
+                url: "https://www.insuranceuntangled.com/ppo-scorecard/",
+              },
+              {
+                "@type": "HowToStep",
+                position: 2,
+                name: "Receive your score and tier",
+                text: "Get an instant score out of 10 mapped to a readiness tier — from Not Ready Yet to Ready to Accelerate — with a breakdown across all 6 dimensions.",
+                url: "https://www.insuranceuntangled.com/ppo-scorecard/",
+              },
+              {
+                "@type": "HowToStep",
+                position: 3,
+                name: "Get personalised next steps",
+                text: "Review prioritised next steps and recommended podcast episodes tailored to your score, plus an optional free strategy meeting.",
+                url: "https://www.insuranceuntangled.com/ppo-scorecard/",
+              },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Home", item: "https://www.insuranceuntangled.com/" },

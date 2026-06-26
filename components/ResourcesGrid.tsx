@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { postToKit } from "@/lib/kit";
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec";
 
@@ -227,12 +228,14 @@ function GateForm({ resource, onClose }: { resource: Resource; onClose: () => vo
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email."); return; }
     setLoading(true);
     setError("");
+    const cleanName = name.trim();
+    const cleanEmail = email.trim();
     try {
       const hp = (e.currentTarget.querySelector<HTMLInputElement>('[name="hp_field"]')?.value || "");
       const params = new URLSearchParams({
         form_type: "resource_request",
-        name: name.trim(),
-        email: email.trim(),
+        name: cleanName,
+        email: cleanEmail,
         resource_id: resource.id,
         resource_title: resource.title,
         resource_type: resource.type,
@@ -240,6 +243,13 @@ function GateForm({ resource, onClose }: { resource: Resource; onClose: () => vo
       });
       await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
     } catch { /* non-blocking */ }
+    postToKit("resource_request", {
+      email: cleanEmail,
+      name: cleanName,
+      resource_id: resource.id,
+      resource_title: resource.title,
+      resource_type: resource.type,
+    });
     setDone(true);
     setLoading(false);
   }

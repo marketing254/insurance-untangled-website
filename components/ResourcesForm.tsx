@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { postToKit } from "@/lib/kit";
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec";
 
@@ -48,15 +49,18 @@ export default function ResourcesForm() {
 
     setLoading(true);
     setError("");
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
     try {
       const params = new URLSearchParams({
         form_type: "resource_request",
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
+        name: cleanName,
+        email: cleanEmail,
         practice: practice.trim(),
       });
       await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
     } catch { /* non-blocking */ }
+    postToKit("resource_request", { email: cleanEmail, name: cleanName });
     setSubmitted(true);
     setLoading(false);
   }

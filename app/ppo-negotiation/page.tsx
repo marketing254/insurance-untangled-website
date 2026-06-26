@@ -112,9 +112,10 @@ export default function PPONegotiation() {
               <div className="ppo-stat-block">
                 <div className="ppo-big-num">$3B<sup style={{ fontSize: "2rem" }}>+</sup></div>
                 <div className="ppo-big-lbl">recovered in reimbursements for dental clients over 20 years</div>
+                <div className="ppo-stat-source">Source: Veritas Dental Resources, 2006&ndash;2026</div>
               </div>
               <div className="ppo-hero-img-wrap">
-                <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80" alt="Dental professional" className="ppo-hero-img" />
+                <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80" alt="Dentist reviewing PPO insurance contracts" className="ppo-hero-img" width={600} height={450} fetchPriority="high" />
               </div>
               <div className="ppo-stat-block">
                 <div className="ppo-big-num" style={{ fontSize: "clamp(2.5rem,5vw,4rem)" }}>120<sup style={{ fontFamily: "var(--sans)", fontSize: "1.4rem", fontWeight: 600, verticalAlign: "super" }}>hrs</sup></div>

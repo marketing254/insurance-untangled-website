@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { postToKit } from "@/lib/kit";
 
 const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec";
 
@@ -82,6 +83,7 @@ export default function ContactForm() {
         method: "GET",
         mode: "no-cors",
       });
+      postToKit("contact", { email: email.toLowerCase(), name, practice, message });
       setSubmitted(true);
     } catch {
       setError("Something went wrong. Please try again or email us directly.");

@@ -570,6 +570,21 @@ export default async function Home() {
             ))}
           </div>
 
+          {/* Source attribution for the headline figures — strengthens E-E-A-T
+              and AI citability (stats with a named source get cited more). */}
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "1rem",
+              fontFamily: "var(--mono)",
+              fontSize: "10px",
+              letterSpacing: ".04em",
+              color: "rgba(255,255,255,.38)",
+            }}
+          >
+            Figures: Veritas Dental Resources &amp; Ekwa Marketing, 2006&ndash;2026
+          </div>
+
           {/* Subtle trust footer */}
           <div
             style={{

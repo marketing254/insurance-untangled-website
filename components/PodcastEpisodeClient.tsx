@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { fetchSheetClient } from "@/lib/sheets-client";
+import { postToKit } from "@/lib/kit";
 import { buildPodcastTranscript, type PodcastTranscript } from "@/lib/transcripts";
 
 const GATE_KEY = "iu_podcast_unlocked";
@@ -230,17 +231,21 @@ function PlayerGateForm({ episodeTitle, onUnlock }: { episodeTitle: string; onUn
     }
 
     setSubmitting(true);
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
     try {
       const params = new URLSearchParams();
       params.set("form_type", "podcast_gate");
-      params.set("name", name.trim());
-      params.set("email", email.trim().toLowerCase());
+      params.set("name", cleanName);
+      params.set("email", cleanEmail);
       params.set("episode_title", episodeTitle);
       params.set("source", "episode_page");
       await fetch(APPS_SCRIPT_URL, { method: "POST", mode: "no-cors", body: params });
+      postToKit("podcast_gate", { email: cleanEmail, name: cleanName });
       localStorage.setItem(GATE_KEY, "1");
       onUnlock();
     } catch {
+      postToKit("podcast_gate", { email: cleanEmail, name: cleanName });
       localStorage.setItem(GATE_KEY, "1");
       onUnlock();
     } finally {

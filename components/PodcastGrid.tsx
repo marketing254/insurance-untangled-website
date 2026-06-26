@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchSheetClient } from "@/lib/sheets-client";
 import { driveImageUrl } from "@/lib/sheets";
+import { postToKit } from "@/lib/kit";
 
 const GATE_KEY = "iu_podcast_unlocked";
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec";
@@ -84,16 +85,19 @@ function GateForm({ onUnlock, episodeTitle }: { onUnlock: () => void; episodeTit
 
     setLoading(true);
     setError("");
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
     try {
       const params = new URLSearchParams({
         form_type: "podcast_gate",
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
+        name: cleanName,
+        email: cleanEmail,
         episode_title: episodeTitle,
         source: "card_gate",
       });
       await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
     } catch { /* non-blocking */ }
+    postToKit("podcast_gate", { email: cleanEmail, name: cleanName });
     localStorage.setItem(GATE_KEY, "1");
     onUnlock();
   };

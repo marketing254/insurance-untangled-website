@@ -621,6 +621,7 @@ a.su-card { text-decoration: none; color: inherit; }
 .ppo-stat-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--r-lg); padding: 2.25rem 2rem; }
 .ppo-big-num { font-family: var(--serif); font-size: 4.75rem; font-weight: 900; color: var(--steel-lt); line-height: 1; }
 .ppo-big-lbl { font-size: 14px; color: rgba(255,255,255,.65); margin-top: .5rem; line-height: 1.62; }
+.ppo-stat-source { font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; color: rgba(255,255,255,.4); margin-top: .55rem; }
 .ppo-divider { border: none; border-top: 1px solid rgba(255,255,255,.09); margin: 1.4rem 0; }
 .ppo-benefits-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.1rem; margin-top: 2rem; }
 .benefit-card { background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: var(--r-lg); padding: 1.6rem; transition: border-color .18s, transform .18s; }

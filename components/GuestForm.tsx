@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { postToKit } from "@/lib/kit";
 
 const FORM_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec";
@@ -115,6 +116,17 @@ export default function GuestForm() {
       await fetch(FORM_ENDPOINT + "?" + params.toString(), {
         method: "GET",
         mode: "no-cors",
+      });
+      postToKit("guest", {
+        email: data.email.trim().toLowerCase(),
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        firm: data.firm.trim(),
+        title: data.title.trim(),
+        phone: data.phone.trim(),
+        applyAs: data.applyAs,
+        topic: data.topic,
+        bio: data.bio.trim(),
       });
       setSubmitted(true);
     } catch {

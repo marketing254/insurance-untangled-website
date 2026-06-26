@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { postToKit } from "@/lib/kit";
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec";
 
@@ -58,15 +59,21 @@ export default function NewsletterForm({
 
     setLoading(true);
     setError("");
+    const formType = source === "blog" ? "newsletter_blog" : "newsletter";
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
     try {
       const params = new URLSearchParams({
-        form_type: source === "blog" ? "newsletter_blog" : "newsletter",
+        form_type: formType,
         source,
-        email: email.trim().toLowerCase(),
-        ...(name.trim() && { name: name.trim() }),
+        email: cleanEmail,
+        ...(cleanName && { name: cleanName }),
       });
       await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
     } catch { /* non-blocking */ }
+    // Send to Kit directly from the browser — proper Origin/Referer headers
+    // make Kit accept the lead cleanly (unlike Apps Script's UrlFetchApp).
+    postToKit(formType, { email: cleanEmail, name: cleanName, source });
     setDone(true);
     setLoading(false);
   }

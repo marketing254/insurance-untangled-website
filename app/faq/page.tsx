@@ -25,6 +25,35 @@ interface FAQSection {
 
 const SECTIONS: FAQSection[] = [
   {
+    title: "Dental Insurance & PPO Basics",
+    items: [
+      {
+        q: "How do I negotiate PPO fees with dental insurance companies?",
+        a: "Start by pulling your full office fee schedule and your current reimbursement rates on your top 10 procedure codes for each PPO plan. Rank plans by profitability and patient volume, then contact each carrier's provider relations department with documented data showing how your fees compare to your region. Insurance companies default to \"no,\" so leverage, preparation, and a willingness to go out-of-network are what move the conversation. Most practices recover 15–30% more on their top plans when negotiations are handled correctly.",
+      },
+      {
+        q: "Should I drop PPO plans from my dental practice?",
+        a: "Not without data. First identify which plans are least profitable by comparing reimbursement rates against your office fees and the chair time each plan consumes. The least profitable 2–3 plans by patient volume are usually the first candidates to renegotiate or exit. Dropping a plan only makes sense once your marketing can replace those patients — so build your new-patient pipeline before reducing network participation.",
+      },
+      {
+        q: "What is an umbrella network in dental insurance?",
+        a: "An umbrella network (also called a leased or shared network) lets one insurance carrier lease your contracted fee schedule to other payers without a separate agreement. This means you can be in-network — and accepting lower fees — with plans you never knowingly signed up for. Reviewing your PPO contracts for umbrella network clauses is one of the fastest ways to find money you're leaving on the table.",
+      },
+      {
+        q: "What is a dental fee schedule?",
+        a: "A dental fee schedule is the list of maximum amounts an insurance plan will reimburse for each procedure code (CDT code). When you join a PPO, you agree to accept that plan's contracted fees as payment in full, writing off the difference between your standard office fee and the plan's allowed amount. Knowing your write-off percentage per plan is the foundation of any PPO strategy.",
+      },
+      {
+        q: "How often can I renegotiate my dental PPO fees?",
+        a: "Most carriers allow fee schedule reviews every 12–24 months, though many practices go 10+ years without ever asking. Some contracts now insert clauses locking in no-negotiation periods of up to three years while reserving the carrier's right to lower fees within twelve months — so reading the fine print before signing renewals is critical.",
+      },
+      {
+        q: "What does going out-of-network mean for a dental practice?",
+        a: "Going out-of-network means terminating your contract with a specific PPO plan so you are no longer bound by its discounted fee schedule. You can still treat patients with that insurance and submit claims on their behalf, but you collect your full fee and the patient is reimbursed at their plan's out-of-network rate. Practices with strong patient relationships and marketing typically see minimal attrition when they transition plans strategically.",
+      },
+    ],
+  },
+  {
     title: "About Insurance Untangled",
     items: [
       {

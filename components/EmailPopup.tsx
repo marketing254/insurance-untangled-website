@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { postToKit } from "@/lib/kit";
 
 const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbzLJBbXsMR-Gio7KZaIuNvbPpnHr8P7ght6Uez73F9uOJeoqxbxg41dl5NMPhNBugMz0g/exec"; // Paste your deployed Apps Script URL here
 
@@ -112,7 +113,10 @@ export default function EmailPopup() {
     }
 
     setSubmitting(true);
-    await submitForm({ name: name.trim(), email: email.trim().toLowerCase() }, "email_popup");
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    await submitForm({ name: cleanName, email: cleanEmail }, "email_popup");
+    postToKit("email_popup", { email: cleanEmail, name: cleanName });
     setSubmitting(false);
     setSubmitted(true);
     sessionStorage.setItem("iu_popup_dismissed", "1");
