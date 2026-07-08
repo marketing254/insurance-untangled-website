@@ -39,7 +39,34 @@ type Episode = {
   poster_image: string;
   audio_source: string;
   transcript_url: string;
+  date_iso: string;   // dd-mm-yyyy from the sheet
 };
+
+// The sheet stores dates as "dd-mm-yyyy" (e.g. "13-01-2026"), but some rows
+// may have been auto-formatted by Sheets into locale-dependent forms like
+// "1/13/2026" or "2026-01-13". Handle all common variants defensively.
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+function formatEpisodeDate(raw: string): string {
+  const s = (raw || "").trim();
+  if (!s) return "";
+  const parts = s.split(/[-/]/).map((p) => p.trim()).filter(Boolean);
+  if (parts.length !== 3) return "";
+  const a = parseInt(parts[0], 10);
+  const b = parseInt(parts[1], 10);
+  const c = parseInt(parts[2], 10);
+  if (!a || !b || !c) return "";
+  let dd = 0, mm = 0, yyyy = 0;
+  if (parts[0].length === 4 && c <= 31) { yyyy = a; mm = b; dd = c; }
+  else if (parts[2].length === 4 && a > 12) { dd = a; mm = b; yyyy = c; }
+  else if (parts[2].length === 4 && b > 12) { mm = a; dd = b; yyyy = c; }
+  else if (parts[2].length === 4) { dd = a; mm = b; yyyy = c; }
+  else return "";
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return "";
+  return `${MONTH_NAMES[mm - 1]} ${dd}, ${yyyy}`;
+}
 
 type Props = {
   slug: string;
@@ -410,6 +437,17 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
                 {episode.category}
               </span>
             )}
+            {formatEpisodeDate(episode.date_iso) && (
+              <span style={{ fontFamily: "var(--mono)", fontSize: "10px", fontWeight: 500, letterSpacing: ".08em", color: "rgba(255,255,255,.5)", display: "inline-flex", alignItems: "center", gap: ".35rem" }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                {formatEpisodeDate(episode.date_iso)}
+              </span>
+            )}
           </div>
           <h1 className="page-title" style={{ maxWidth: "720px" }}>{episode.title}</h1>
           {episode.guest_name && (
@@ -588,6 +626,12 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
                     <span style={{ fontSize: "13px", color: "var(--ink-4)" }}>Episode</span>
                     <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--ink)" }}>{episode.episode}</span>
                   </div>
+                  {formatEpisodeDate(episode.date_iso) && (
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: "13px", color: "var(--ink-4)" }}>Published</span>
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--ink)" }}>{formatEpisodeDate(episode.date_iso)}</span>
+                    </div>
+                  )}
                   {episode.category && (
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span style={{ fontSize: "13px", color: "var(--ink-4)" }}>Category</span>

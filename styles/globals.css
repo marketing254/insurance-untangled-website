@@ -439,7 +439,13 @@ section { padding: 4rem 0; }
 .filter-tab { padding: .38rem .9rem; border: 1px solid var(--paper-3); border-radius: 20px; font-size: 12.5px; font-weight: 500; color: var(--ink-3); cursor: pointer; transition: all .18s; background: var(--paper); letter-spacing: .01em; }
 .filter-tab:hover, .filter-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 .ep-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.35rem; align-items: start; }
-.ep-card { background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: var(--r-lg); overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: border-color .18s, transform .18s, box-shadow .18s; }
+.ep-card { background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: var(--r-lg); overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: border-color .18s, transform .18s, box-shadow .18s;
+  /* Skip render work for off-screen cards until scrolled near; huge win when
+     paginating 137+ episodes because Drive-hosted thumbnails aren't fetched
+     until each card is close to the viewport. */
+  content-visibility: auto;
+  contain-intrinsic-size: 320px;
+}
 .ep-card:hover { border-color: var(--steel-lt); transform: translateY(-6px); box-shadow: 0 12px 36px rgba(11,37,69,.94); }
 .ep-card-img-placeholder { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, var(--navy-lt) 0%, var(--steel) 100%); display: flex; align-items: center; justify-content: center; }
 .ep-card-img-placeholder svg { width: 28px; height: 28px; color: rgba(255,255,255,.38); }
@@ -447,6 +453,7 @@ section { padding: 4rem 0; }
 .ep-card-num { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--steel); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .35rem; }
 .ep-card-title { font-size: 13px; font-weight: 500; color: var(--ink-2); line-height: 1.48; flex: 1; }
 .ep-card-name { font-family: var(--serif); font-size: 14.5px; font-weight: 700; color: var(--ink); line-height: 1.35; margin-bottom: .15rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1; }
+.ep-card-date { font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: var(--ink-4); margin-top: .35rem; margin-bottom: .1rem; }
 .ep-card-tag { display: inline-block; margin-top: .7rem; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--steel); background: var(--sky-pale); padding: .2rem .5rem; border-radius: var(--r); }
 .pagination { display: flex; align-items: center; justify-content: center; gap: .45rem; margin-top: 2rem; }
 .page-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--paper-3); border-radius: var(--r); font-family: var(--mono); font-size: 12.5px; color: var(--ink-3); cursor: pointer; text-decoration: none; transition: all .18s; background: var(--paper); }

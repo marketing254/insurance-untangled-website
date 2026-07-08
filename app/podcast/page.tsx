@@ -201,7 +201,7 @@ export default async function PodcastPage() {
           </div>
 
           {/* Episode Grid - client-side fetch for instant updates */}
-          <PodcastGrid initialEpisodes={episodes.map(ep => ({ episode: ep.episode, title: ep.title, category: ep.category, poster_image: ep.poster_image, audio_source: ep.audio_source }))} />
+          <PodcastGrid initialEpisodes={episodes.map(ep => ({ episode: ep.episode, title: ep.title, category: ep.category, poster_image: ep.poster_image, audio_source: ep.audio_source, date_iso: ep.date_iso }))} />
 
           {/* Platform CTAs */}
           <div style={{ marginTop: "2.5rem", padding: "1.75rem", background: "var(--paper)", border: "1px solid var(--paper-3)", borderRadius: "var(--r-lg)", textAlign: "center" }}>

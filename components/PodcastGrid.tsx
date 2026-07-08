@@ -32,6 +32,7 @@ interface Episode {
   category: string;
   poster_image: string;
   audio_source: string;
+  date_iso: string;   // dd-mm-yyyy from the sheet
 }
 
 function titleSlug(ep: Episode): string {
@@ -40,12 +41,40 @@ function titleSlug(ep: Episode): string {
   return `${num}-${slug}`;
 }
 
-// Episodes 1–135 had the title baked into their poster image. From 136 onward
-// the artwork is generic, so the title + episode number need to render as
-// visible text on the card rather than as an sr-only span.
-const VISIBLE_TITLE_FROM_EP = 136;
-function shouldShowVisibleTitle(epNum: string): boolean {
-  return (parseInt(epNum) || 0) >= VISIBLE_TITLE_FROM_EP;
+// The sheet stores dates as "dd-mm-yyyy" (e.g. "13-01-2026"), but some rows
+// may have been auto-formatted by Sheets into locale-dependent forms like
+// "1/13/2026" or "2026-01-13". Handle all common variants defensively so a
+// stray format doesn't wipe the date from a card.
+const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function formatEpDate(raw: string): string {
+  const s = (raw || "").trim();
+  if (!s) return "";
+  const parts = s.split(/[-/]/).map((p) => p.trim()).filter(Boolean);
+  if (parts.length !== 3) return "";
+  const a = parseInt(parts[0], 10);
+  const b = parseInt(parts[1], 10);
+  const c = parseInt(parts[2], 10);
+  if (!a || !b || !c) return "";
+  let dd = 0, mm = 0, yyyy = 0;
+  // yyyy-mm-dd
+  if (parts[0].length === 4 && c <= 31) { yyyy = a; mm = b; dd = c; }
+  // dd-mm-yyyy (sheet default) — if first part > 12 it MUST be day
+  else if (parts[2].length === 4 && a > 12) { dd = a; mm = b; yyyy = c; }
+  // mm-dd-yyyy — if second part > 12 it MUST be day
+  else if (parts[2].length === 4 && b > 12) { mm = a; dd = b; yyyy = c; }
+  // Ambiguous (both ≤ 12) — assume dd-mm-yyyy per the sheet's stated convention
+  else if (parts[2].length === 4) { dd = a; mm = b; yyyy = c; }
+  else return "";
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return "";
+  return `${MONTH_ABBR[mm - 1]} ${dd}, ${yyyy}`;
+}
+
+// Every card now shows the episode number + title as visible text. Older
+// episodes (1–135) also have the title baked into their poster image, but
+// the visible text is still worth rendering for consistency and for
+// screen-reader / search-index accessibility.
+function shouldShowVisibleTitle(_epNum: string): boolean {
+  return true;
 }
 
 function categoryColor(cat: string): { bg: string; color: string } {
@@ -156,7 +185,13 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
       const parsed = rows
         .filter((r) => r.episode && r.title)
         .sort((a, b) => (parseInt(b.episode) || 0) - (parseInt(a.episode) || 0)) as unknown as Episode[];
-      if (parsed.length > 0) setEpisodes(parsed);
+      if (parsed.length === 0) return;
+      // Always replace with the fresh data — this refetch exists specifically
+      // to surface sheet changes made after the last build (new dates on
+      // existing episodes, new descriptions, etc.). A previous shallow-dedup
+      // check here was silently discarding those field-level updates when
+      // the row count + first episode's title stayed the same.
+      setEpisodes(parsed);
     }).catch(() => {});
   }, []);
 
@@ -223,6 +258,9 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
             ) : (
               <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
             )}
+            {formatEpDate(ep.date_iso) && (
+              <div className="ep-card-date">{formatEpDate(ep.date_iso)}</div>
+            )}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".4rem" }}>
               <span className="ep-card-tag" style={{ background: bg, color }}>{ep.category || "Episode"}</span>
               <span style={{ fontFamily: "var(--mono)", fontSize: "9.5px", color: "var(--ink-4)", letterSpacing: ".04em" }}>
@@ -283,6 +321,9 @@ export default function PodcastGrid({ initialEpisodes }: { initialEpisodes: Epis
                     </>
                   ) : (
                     <span className="sr-only">Episode {ep.episode}: {ep.title}</span>
+                  )}
+                  {formatEpDate(ep.date_iso) && (
+                    <div className="ep-card-date">{formatEpDate(ep.date_iso)}</div>
                   )}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".4rem" }}>
                     <span className="ep-card-tag" style={{ ...categoryColor(ep.category) }}>{ep.category || "Episode"}</span>

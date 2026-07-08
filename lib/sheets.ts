@@ -13,8 +13,27 @@ interface GvizCell {
 
 function cellValue(cell: GvizCell | null): string {
   if (!cell) return '';
-  // Prefer the formatted value (cell.f) for dates and numbers — gviz returns
-  // dates as `Date(YYYY,M,D)` in `v` and the human-readable form in `f`.
+  // When Google Sheets treats a cell as a date, gviz returns two representations:
+  //   v = "Date(YYYY,M,D)"    ← month is 0-indexed, locale-INDEPENDENT
+  //   f = "1/13/2026"          ← human-readable, varies with Sheet locale
+  //
+  // Preferring `f` breaks downstream date parsing because locale-dependent
+  // formats are ambiguous (1/13 could be Jan 13 or 1st Mar). We prefer `v`
+  // when it looks like a Date() and normalize to dd-mm-yyyy so the rest of
+  // the app has a single, unambiguous format to parse.
+  if (typeof cell.v === 'string') {
+    const dateFn = cell.v.match(/^Date\((\d+),(\d+),(\d+)/);
+    if (dateFn) {
+      const y = dateFn[1];
+      const mo = String(parseInt(dateFn[2], 10) + 1).padStart(2, '0');
+      const d = dateFn[3].padStart(2, '0');
+      // yyyy-mm-dd is ISO-native, sortable via string comparison, and
+      // parseable by `new Date()`. All downstream code either works with
+      // this directly (events, webinars) or is already tolerant to it
+      // (podcast formatters).
+      return `${y}-${mo}-${d}`;
+    }
+  }
   if (cell.f !== undefined && cell.f !== null && cell.f !== '') {
     return String(cell.f).trim();
   }

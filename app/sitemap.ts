@@ -31,27 +31,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // /thank-you/ intentionally excluded — noindex page, post-conversion only
   ];
 
-  // Dynamic podcast episode pages — date_iso is `dd-mm-yyyy` per the Sheet column
-  const parseDdMmYyyy = (raw: string): Date => {
-    const parts = (raw || "").trim().split(/[-/]/);
-    if (parts.length === 3 && parts[2].length === 4) {
-      return new Date(`${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`);
+  // date_iso is normalized to "dd-mm-yyyy" in lib/sheets.ts's cellValue().
+  // Parse it into a real Date, tolerating "yyyy-mm-dd" and empty rows too.
+  const parseSheetDate = (raw: string): Date => {
+    const s = (raw || "").trim();
+    if (!s) return new Date();
+    const parts = s.split(/[-/]/).map((p) => p.trim()).filter(Boolean);
+    if (parts.length !== 3) return new Date();
+    // yyyy-mm-dd
+    if (parts[0].length === 4) {
+      const d = new Date(`${parts[0]}-${parts[1].padStart(2, "0")}-${parts[2].padStart(2, "0")}`);
+      return isNaN(d.getTime()) ? new Date() : d;
+    }
+    // dd-mm-yyyy (our normalized form)
+    if (parts[2].length === 4) {
+      const d = new Date(`${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`);
+      return isNaN(d.getTime()) ? new Date() : d;
     }
     return new Date();
   };
+
   const podcasts = await getPodcasts();
   const podcastPages = podcasts.filter((ep) => ep.episode).map((ep) => ({
     url: `${baseUrl}/podcast/${podcastSlug(ep)}/`,
-    lastModified: ep.date_iso ? parseDdMmYyyy(ep.date_iso) : new Date(),
+    lastModified: parseSheetDate(ep.date_iso),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
-  // Dynamic webinar replay pages
+  // Dynamic webinar replay pages — same date normalization
   const webinars = await getWebinars();
   const webinarPages = webinars.map((w) => ({
     url: `${baseUrl}/events/replay/${webinarSlug(w)}/`,
-    lastModified: w.date_iso ? new Date(w.date_iso) : new Date(),
+    lastModified: parseSheetDate(w.date_iso),
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
