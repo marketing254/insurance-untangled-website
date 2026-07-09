@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import NotFoundEpisodeFallback from "@/components/NotFoundEpisodeFallback";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <>
+    <NotFoundEpisodeFallback>
       <div className="page-banner" style={{ minHeight: "55vh", display: "flex", alignItems: "center" }}>
         <div className="container page-banner-inner" style={{ textAlign: "center" }}>
           <div
@@ -93,6 +94,6 @@ export default function NotFound() {
           </div>
         </div>
       </section>
-    </>
+    </NotFoundEpisodeFallback>
   );
 }
