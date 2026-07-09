@@ -118,6 +118,9 @@ export async function postToKit(
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body,
+      // keepalive: gate forms navigate immediately after unlocking — this
+      // keeps the request alive through the page transition.
+      keepalive: true,
       // Browser supplies Origin + Referer automatically — this is the difference
       // vs. Apps Script's UrlFetchApp that makes Kit accept the lead cleanly.
     });

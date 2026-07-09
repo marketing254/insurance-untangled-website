@@ -41,8 +41,12 @@ function cellValue(cell: GvizCell | null): string {
 }
 
 export async function fetchSheetClient(sheetName: string): Promise<Record<string, string>[]> {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(sheetName)}`;
-  const res = await fetch(url);
+  // `t` param + no-store defeat both browser HTTP cache and any intermediate
+  // gviz caching — sheet edits must reflect on the very next page load, not
+  // whenever a cache expires. (Symptom otherwise: an episode appears, then
+  // "vanishes" on reload when a stale cached copy is served.)
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}`;
+  const res = await fetch(url, { cache: "no-store" });
   const text = await res.text();
 
   const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);

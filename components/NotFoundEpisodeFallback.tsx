@@ -75,6 +75,9 @@ export default function NotFoundEpisodeFallback({ children }: { children: React.
           setEpisode(match);
           setSlug(pathSlug);
           setState("found");
+          // The static shell is the 404 page, so the tab reads "Page Not
+          // Found" — overwrite it with the real episode title.
+          document.title = `Ep ${match.episode}: ${match.title} | Insurance Untangled`;
         } else {
           setState("not-episode");
         }

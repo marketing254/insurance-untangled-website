@@ -186,10 +186,12 @@ function fetchProxyText(sourceUrl: string): Promise<TranscriptProxyResult> {
       script.remove();
     };
 
+    // 30s — Apps Script cold starts plus a Drive/Doc fetch routinely take
+    // 15–20s on the first hit of the day; 15s was producing false timeouts.
     const timer = window.setTimeout(() => {
       cleanup();
       resolve({ text: null, error: "Transcript proxy timed out." });
-    }, 15000);
+    }, 30000);
 
     (window as typeof window & Record<string, (payload: { success?: boolean; text?: string; error?: string }) => void>)[callbackName] = (payload) => {
       window.clearTimeout(timer);
@@ -260,24 +262,19 @@ function PlayerGateForm({ episodeTitle, onUnlock }: { episodeTitle: string; onUn
     setSubmitting(true);
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
-    try {
-      const params = new URLSearchParams();
-      params.set("form_type", "podcast_gate");
-      params.set("name", cleanName);
-      params.set("email", cleanEmail);
-      params.set("episode_title", episodeTitle);
-      params.set("source", "episode_page");
-      await fetch(APPS_SCRIPT_URL, { method: "POST", mode: "no-cors", body: params });
-      postToKit("podcast_gate", { email: cleanEmail, name: cleanName });
-      localStorage.setItem(GATE_KEY, "1");
-      onUnlock();
-    } catch {
-      postToKit("podcast_gate", { email: cleanEmail, name: cleanName });
-      localStorage.setItem(GATE_KEY, "1");
-      onUnlock();
-    } finally {
-      setSubmitting(false);
-    }
+    // Fire-and-forget: unlock IMMEDIATELY — never make the user wait for
+    // Apps Script (3–10s for sheet write + team email).
+    const params = new URLSearchParams();
+    params.set("form_type", "podcast_gate");
+    params.set("name", cleanName);
+    params.set("email", cleanEmail);
+    params.set("episode_title", episodeTitle);
+    params.set("source", "episode_page");
+    fetch(APPS_SCRIPT_URL, { method: "POST", mode: "no-cors", body: params, keepalive: true }).catch(() => {});
+    postToKit("podcast_gate", { email: cleanEmail, name: cleanName });
+    localStorage.setItem(GATE_KEY, "1");
+    onUnlock();
+    setSubmitting(false);
   }
 
   return (

@@ -116,16 +116,16 @@ function GateForm({ onUnlock, episodeTitle }: { onUnlock: () => void; episodeTit
     setError("");
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
-    try {
-      const params = new URLSearchParams({
-        form_type: "podcast_gate",
-        name: cleanName,
-        email: cleanEmail,
-        episode_title: episodeTitle,
-        source: "card_gate",
-      });
-      await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
-    } catch { /* non-blocking */ }
+    // Fire-and-forget: unlock IMMEDIATELY. Apps Script takes 3–10s (sheet
+    // write + team email) — the user must never wait on that.
+    const params = new URLSearchParams({
+      form_type: "podcast_gate",
+      name: cleanName,
+      email: cleanEmail,
+      episode_title: episodeTitle,
+      source: "card_gate",
+    });
+    fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors", keepalive: true }).catch(() => {});
     postToKit("podcast_gate", { email: cleanEmail, name: cleanName });
     localStorage.setItem(GATE_KEY, "1");
     onUnlock();

@@ -53,16 +53,15 @@ function WebinarGateForm({ title, onUnlock }: { title: string; onUnlock: () => v
 
     setLoading(true);
     setError("");
-    try {
-      const params = new URLSearchParams({
-        form_type: "webinar_access",
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        webinar_title: title,
-        source: "card_gate",
-      });
-      await fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors" });
-    } catch { /* non-blocking */ }
+    // Fire-and-forget: unlock immediately, backend call completes in background.
+    const params = new URLSearchParams({
+      form_type: "webinar_access",
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      webinar_title: title,
+      source: "card_gate",
+    });
+    fetch(`${APPS_SCRIPT_URL}?${params}`, { method: "GET", mode: "no-cors", keepalive: true }).catch(() => {});
     localStorage.setItem(GATE_KEY, "1");
     onUnlock();
   };

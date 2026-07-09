@@ -69,22 +69,17 @@ function ReplayGateOverlay({ title, onUnlock }: { title: string; onUnlock: () =>
     }
 
     setSubmitting(true);
-    try {
-      const params = new URLSearchParams();
-      params.set("form_type", "webinar_access");
-      params.set("name", name.trim());
-      params.set("email", email.trim().toLowerCase());
-      params.set("webinar_title", title);
-      params.set("source", "replay_page");
-      await fetch(APPS_SCRIPT_URL, { method: "POST", mode: "no-cors", body: params });
-      localStorage.setItem(GATE_KEY, "1");
-      onUnlock();
-    } catch {
-      localStorage.setItem(GATE_KEY, "1");
-      onUnlock();
-    } finally {
-      setSubmitting(false);
-    }
+    // Fire-and-forget: unlock immediately, backend call completes in background.
+    const params = new URLSearchParams();
+    params.set("form_type", "webinar_access");
+    params.set("name", name.trim());
+    params.set("email", email.trim().toLowerCase());
+    params.set("webinar_title", title);
+    params.set("source", "replay_page");
+    fetch(APPS_SCRIPT_URL, { method: "POST", mode: "no-cors", body: params, keepalive: true }).catch(() => {});
+    localStorage.setItem(GATE_KEY, "1");
+    onUnlock();
+    setSubmitting(false);
   }
 
   return (
