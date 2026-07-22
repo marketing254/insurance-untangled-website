@@ -54,8 +54,15 @@ interface GvizResponse {
   table: GvizTable;
 }
 
+// Evaluated once per build process. Appending it to the gviz URL gives each
+// BUILD a unique URL → Next's persistent fetch cache (.next/cache, survives
+// across builds!) misses and refetches fresh sheet data, while repeated
+// calls WITHIN the same build still dedupe via force-cache. (`no-store`
+// can't be used here — it marks routes dynamic, which output:"export" forbids.)
+const BUILD_STAMP = Date.now();
+
 export async function fetchSheet(sheetName: string): Promise<Record<string, string>[]> {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(sheetName)}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(sheetName)}&build=${BUILD_STAMP}`;
   const res = await fetch(url, { cache: "force-cache" });
   const text = await res.text();
 

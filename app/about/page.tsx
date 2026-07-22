@@ -140,13 +140,26 @@ export default function About() {
             <div className="team-card">
               <div className="team-card-header" style={{ background: "linear-gradient(135deg,#1B2A4A,#1B4965)" }}>
                 <div className="team-avatar-wrap">
-                  <img src="/images/dulaj-team.jpg" alt="Dulaj Perera" className="team-avatar" loading="lazy" />
+                  <img src="/images/dulaj.png" alt="Dulaj Perera" className="team-avatar" loading="lazy" />
                 </div>
               </div>
               <div className="team-card-body">
                 <div className="team-name">Dulaj Perera</div>
                 <div className="team-role">Event &amp; Podcast Coordination</div>
                 <p className="team-bio">Dulaj coordinates podcast production, event logistics, and the content backlog &mdash; keeping episodes on schedule and webinars running without a hitch.</p>
+              </div>
+            </div>
+
+            <div className="team-card">
+              <div className="team-card-header" style={{ background: "linear-gradient(135deg,#1B2A4A,#2E6A8A)" }}>
+                <div className="team-avatar-wrap">
+                  <img src="/images/reshani.jpeg" alt="Reshani Tamasha" className="team-avatar" style={{ objectPosition: "center 20%" }} loading="lazy" />
+                </div>
+              </div>
+              <div className="team-card-body">
+                <div className="team-name">Reshani Tamasha</div>
+                <div className="team-role">Partnership Consultant</div>
+                <p className="team-bio">Reshani leads strategic partnerships at Insurance Untangled, connecting clinicians, innovators, and organizations across the dental and aesthetic industries. With a strong background in training, speaking, and business building, she focuses on collaborations that drive long-term growth and meaningful industry impact.</p>
               </div>
             </div>
 

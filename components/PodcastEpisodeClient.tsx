@@ -72,6 +72,10 @@ type Props = {
   slug: string;
   initialEpisode: Episode;
   initialEpisodes: Episode[];
+  /** Transcript text fetched at build time — when present, the slow
+   *  Apps Script proxy is skipped entirely and the transcript renders
+   *  instantly (plus it's crawlable in the static HTML). */
+  initialTranscriptText?: string;
 };
 
 type TranscriptProxyResult = {
@@ -214,13 +218,13 @@ function fetchProxyText(sourceUrl: string): Promise<TranscriptProxyResult> {
   });
 }
 
-async function loadTranscript(sourceUrl: string, guestName: string): Promise<{ transcript: PodcastTranscript | null; error?: string }> {
+async function loadTranscript(sourceUrl: string, guestName: string): Promise<{ transcript: PodcastTranscript | null; rawText?: string; error?: string }> {
   const result = await fetchProxyText(sourceUrl);
   if (!usableTranscriptText(result.text)) {
     return { transcript: null, error: result.error };
   }
 
-  return { transcript: buildPodcastTranscript(result.text, sourceUrl, guestName) };
+  return { transcript: buildPodcastTranscript(result.text, sourceUrl, guestName), rawText: result.text };
 }
 
 function parseDescription(description: string): string[] {
@@ -340,13 +344,21 @@ function PlayerGateForm({ episodeTitle, onUnlock }: { episodeTitle: string; onUn
   );
 }
 
-export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpisodes }: Props) {
+export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpisodes, initialTranscriptText }: Props) {
   const [unlocked, setUnlocked] = useState(false);
   const [episodes, setEpisodes] = useState<Episode[]>(() => initialEpisodes.map(normalizeEpisode));
   const [episode, setEpisode] = useState<Episode>(() => normalizeEpisode(initialEpisode));
-  const [transcript, setTranscript] = useState<PodcastTranscript | null>(null);
+  // Baked build-time transcript renders instantly; proxy is fallback-only.
+  const [transcript, setTranscript] = useState<PodcastTranscript | null>(() =>
+    initialTranscriptText
+      ? buildPodcastTranscript(initialTranscriptText, initialEpisode.transcript_url, initialEpisode.guest_name)
+      : null
+  );
   const [transcriptLoading, setTranscriptLoading] = useState(false);
   const [transcriptError, setTranscriptError] = useState("");
+  // Which transcript_url the current `transcript` state corresponds to —
+  // prevents the effect below from re-fetching what we already have.
+  const transcriptForUrl = useRef<string>(initialTranscriptText ? (initialEpisode.transcript_url || "").trim() : "");
   const [activeTab, setActiveTab] = useState<"notes" | "transcript">("notes");
   const targetEpisode = episodeNumber(slug) || episodeNumber(initialEpisode.episode);
 
@@ -381,8 +393,27 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
       setTranscript(null);
       setTranscriptError("");
       setTranscriptLoading(false);
+      transcriptForUrl.current = "";
       return;
     }
+
+    // Already have this transcript (baked at build time, or fetched earlier
+    // this session) — don't hit the slow Apps Script proxy again.
+    if (transcriptForUrl.current === transcriptUrl) return;
+
+    // Session cache: a proxy fetch takes 20–30s, so never pay it twice in
+    // one browsing session for the same file.
+    const cacheKey = `iu_tx_${transcriptUrl}`;
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        setTranscript(buildPodcastTranscript(cached, transcriptUrl, episode.guest_name));
+        setTranscriptError("");
+        setTranscriptLoading(false);
+        transcriptForUrl.current = transcriptUrl;
+        return;
+      }
+    } catch { /* storage unavailable — proceed to fetch */ }
 
     let cancelled = false;
     setTranscript(null);
@@ -394,6 +425,10 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
         if (!cancelled) {
           setTranscript(loaded.transcript);
           setTranscriptError(loaded.error || "");
+          if (loaded.transcript) {
+            transcriptForUrl.current = transcriptUrl;
+            try { sessionStorage.setItem(cacheKey, loaded.rawText || ""); } catch { /* quota */ }
+          }
         }
       })
       .catch(() => {

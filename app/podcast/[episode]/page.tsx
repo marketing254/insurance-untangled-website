@@ -23,6 +23,38 @@ function findEpisode(episodes: Podcast[], slug: string): Podcast | undefined {
   return episodes.find((ep) => podcastSlug(ep) === slug) || episodes.find((ep) => episodeNumber(ep.episode) === targetEpisode);
 }
 
+// Fetch the transcript text at BUILD time and bake it into the static page.
+// Runtime fetching through the Apps Script proxy takes 20–30s per page view
+// (Apps Script cold start + Drive read); baked transcripts render instantly
+// AND become crawlable text for SEO. The runtime proxy remains only as the
+// fallback path for brand-new episodes rendered via the 404 fallback.
+async function fetchTranscriptText(rawUrl: string): Promise<string> {
+  const url = (rawUrl || "").trim();
+  if (!url) return "";
+  try {
+    let target = "";
+    const docMatch = url.match(/docs\.google\.com\/document\/d\/([\w-]+)/);
+    if (docMatch) {
+      target = `https://docs.google.com/document/d/${docMatch[1]}/export?format=txt`;
+    } else {
+      const idMatch = url.match(/\/(?:file\/)?d\/([\w-]+)/) || url.match(/[?&]id=([\w-]+)/);
+      if (!idMatch) return "";
+      // drive.usercontent.google.com serves the raw file bytes with proper
+      // redirects for anonymous access (the classic uc?export=download
+      // endpoint 303s into an interstitial for some files).
+      target = `https://drive.usercontent.google.com/download?id=${idMatch[1]}&export=download`;
+    }
+    const res = await fetch(target, { cache: "force-cache", redirect: "follow" });
+    if (!res.ok) return "";
+    const text = await res.text();
+    // Guard against HTML interstitials (permission walls, virus-scan pages)
+    if (/^\s*(<!doctype html|<html)/i.test(text)) return "";
+    return text;
+  } catch {
+    return "";
+  }
+}
+
 export async function generateStaticParams() {
   const episodes = await getPodcasts();
   // Use only the title slug as the canonical URL format; number-only slugs
@@ -150,6 +182,8 @@ export default async function EpisodePage({ params }: Props) {
     }),
   };
 
+  const initialTranscriptText = await fetchTranscriptText(ep.transcript_url);
+
   return (
     <>
       <script
@@ -160,6 +194,7 @@ export default async function EpisodePage({ params }: Props) {
         slug={slug}
         initialEpisode={sanitizeEpisode(ep)}
         initialEpisodes={episodes.map(sanitizeEpisode)}
+        initialTranscriptText={initialTranscriptText}
       />
     </>
   );
