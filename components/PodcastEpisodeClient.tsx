@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { fetchSheetClient } from "@/lib/sheets-client";
+import { driveImageUrl } from "@/lib/sheets";
 import { postToKit } from "@/lib/kit";
 import { buildPodcastTranscript, type PodcastTranscript } from "@/lib/transcripts";
 
@@ -460,7 +461,9 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
             All Episodes
           </Link>
-          <div style={{ display: "flex", alignItems: "center", gap: ".75rem", marginBottom: "1rem" }}>
+          <div className="ep-hero-grid">
+            <div>
+          <div style={{ display: "flex", alignItems: "center", gap: ".75rem", marginBottom: "1rem", flexWrap: "wrap" }}>
             <span style={{ fontFamily: "var(--mono)", fontSize: "11px", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--sky)", background: "rgba(168,196,228,.12)", padding: ".35rem .85rem", borderRadius: "20px", border: "1px solid rgba(168,196,228,.2)" }}>
               Episode {episode.episode}
             </span>
@@ -493,6 +496,15 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
               </div>
             </div>
           )}
+            </div>
+            {episode.poster_image && (
+              <div className="ep-hero-thumb ep-thumb-glassy" role="img" aria-label={`Episode ${episode.episode} thumbnail — ${episode.title}`}
+                style={{
+                  background: `linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 28%, transparent 72%, rgba(11,25,55,.22) 100%), url('${driveImageUrl(episode.poster_image, 800)}') center/cover no-repeat`,
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
 

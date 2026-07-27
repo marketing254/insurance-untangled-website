@@ -4198,6 +4198,28 @@ footer {
   .ep-detail-grid { grid-template-columns: 1fr; }
 }
 
+/* Episode hero: title/meta left, poster thumbnail right */
+.ep-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 540px;
+  gap: 3rem;
+  align-items: center;
+}
+.ep-hero-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(168,196,228,.22);
+  box-shadow: 0 18px 44px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18);
+}
+@media(max-width: 1100px) {
+  .ep-hero-grid { grid-template-columns: minmax(0, 1fr) 420px; }
+}
+@media(max-width: 900px) {
+  .ep-hero-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+  .ep-hero-thumb { max-width: 460px; }
+}
+
 /* Podcast episode content tabs */
 .podcast-content-panel,
 .podcast-transcript {
