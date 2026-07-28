@@ -92,7 +92,7 @@ export default function ThankYouPage() {
                 </svg>
               </div>
               <div className="su-title">Latest podcast episode</div>
-              <p className="su-desc">137+ free episodes on PPO strategy, fee negotiation, and dental practice growth.</p>
+              <p className="su-desc">140+ free episodes on PPO strategy, fee negotiation, and dental practice growth.</p>
             </Link>
             <Link href="/ppo-scorecard/" className="su-card">
               <div className="su-icon-wrap">

@@ -1,20 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getPodcasts, podcastSlug } from "@/lib/sheets";
+import { getPodcasts, podcastSlug, totalEpisodeCount } from "@/lib/sheets";
 import PodcastGrid from "@/components/PodcastGrid";
 
-export const metadata: Metadata = {
-  // Override the global template — title is brand-led already, no need to append " | Insurance Untangled"
-  title: { absolute: "Dental Insurance Podcast — PPO Strategy & Fee Negotiation" },
-  description:
-    "137+ expert conversations decoding PPO contracts, fee negotiations, claim strategy, and the business realities of modern dentistry. New episodes weekly.",
-  alternates: { canonical: "https://www.insuranceuntangled.com/podcast/" },
-  openGraph: {
-    title: "Dental Insurance Podcast — PPO Strategy & Fee Negotiation",
-    description: "Expert conversations decoding dental insurance — PPO strategy, fee negotiation, and marketing for dentists.",
-    url: "https://www.insuranceuntangled.com/podcast/",
-  },
-};
+// generateMetadata (vs. a static object) so the episode count in the meta
+// description tracks the sheet automatically — it was hardcoded "137+" before.
+export async function generateMetadata(): Promise<Metadata> {
+  const episodes = await getPodcasts();
+  return {
+    // Override the global template — title is brand-led already, no need to append " | Insurance Untangled"
+    title: { absolute: "Dental Insurance Podcast — PPO Strategy & Fee Negotiation" },
+    description:
+      `${totalEpisodeCount(episodes)}+ expert conversations decoding PPO contracts, fee negotiations, claim strategy, and the business realities of modern dentistry. New episodes weekly.`,
+    alternates: { canonical: "https://www.insuranceuntangled.com/podcast/" },
+    openGraph: {
+      title: "Dental Insurance Podcast — PPO Strategy & Fee Negotiation",
+      description: "Expert conversations decoding dental insurance — PPO strategy, fee negotiation, and marketing for dentists.",
+      url: "https://www.insuranceuntangled.com/podcast/",
+    },
+  };
+}
 
 export default async function PodcastPage() {
   const episodes = await getPodcasts();
@@ -54,7 +59,7 @@ export default async function PodcastPage() {
               <div className="page-eyebrow">The podcast</div>
               <h1 className="page-title">Untangling dental insurance, one episode at a time.</h1>
               <p className="page-sub">
-                {episodes.length}+ expert conversations decoding PPO contracts, fee negotiations, claim strategy, and
+                {totalEpisodeCount(episodes)}+ expert conversations decoding PPO contracts, fee negotiations, claim strategy, and
                 the business realities of modern dentistry. New episodes every week, free forever.
               </p>
               <div className="platform-strip">
@@ -114,7 +119,7 @@ export default async function PodcastPage() {
             <div>
               <div className="sec-eyebrow">All episodes</div>
               <h2 className="sec-title" style={{ marginBottom: 0 }}>
-                {episodes.length} episodes &amp; counting.
+                {totalEpisodeCount(episodes)}{" "}episodes &amp; counting.
               </h2>
             </div>
           </div>
@@ -206,7 +211,7 @@ export default async function PodcastPage() {
           {/* Platform CTAs */}
           <div style={{ marginTop: "2.5rem", padding: "1.75rem", background: "var(--paper)", border: "1px solid var(--paper-3)", borderRadius: "var(--r-lg)", textAlign: "center" }}>
             <div style={{ fontFamily: "var(--mono)", fontSize: "11px", letterSpacing: ".14em", textTransform: "uppercase" as const, color: "var(--steel)", marginBottom: ".5rem" }}>
-              Want all {episodes.length} episodes?
+              Want all {totalEpisodeCount(episodes)}{" "}episodes?
             </div>
             <p style={{ fontSize: "14px", color: "var(--ink-2)", marginBottom: "1rem" }}>
               Listen on Apple Podcasts, Spotify, or any podcast app &mdash; every episode is free.

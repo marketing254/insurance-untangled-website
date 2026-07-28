@@ -66,7 +66,7 @@ const SECTIONS: FAQSection[] = [
       },
       {
         q: "Is everything really free?",
-        a: "Yes. All 137+ podcast episodes, all 16+ webinar replays, the PPO Readiness Scorecard, the blog, and our resource library are free. We monetize through the PPO negotiation service (Veritas Dental Resources) and dental marketing service (Ekwa Marketing) — both of which are paid engagements you can opt into, never pushed.",
+        a: "Yes. Every podcast episode, every webinar replay, the PPO Readiness Scorecard, the blog, and our resource library are free. We monetize through the PPO negotiation service (Veritas Dental Resources) and dental marketing service (Ekwa Marketing) — both of which are paid engagements you can opt into, never pushed.",
       },
     ],
   },
@@ -75,7 +75,7 @@ const SECTIONS: FAQSection[] = [
     items: [
       {
         q: "How many podcast episodes are there?",
-        a: "137 episodes and growing. New episodes are released weekly. Topics include PPO contract negotiation, dental fee schedules, claim denials, umbrella networks, dental marketing, patient acquisition, and the business of dentistry.",
+        a: "Over 140 episodes and growing. New episodes are released weekly. Topics include PPO contract negotiation, dental fee schedules, claim denials, umbrella networks, dental marketing, patient acquisition, and the business of dentistry.",
       },
       {
         q: "Where can I listen to the podcast?",

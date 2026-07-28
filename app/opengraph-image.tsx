@@ -114,7 +114,7 @@ export default function OGImage() {
             }}
           >
             {[
-              { val: "137+", lbl: "Episodes" },
+              { val: "140+", lbl: "Episodes" },
               { val: "$3B+", lbl: "Recovered" },
               { val: "16+", lbl: "CE Webinars" },
               { val: "Free", lbl: "Always" },

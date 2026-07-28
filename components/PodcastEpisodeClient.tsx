@@ -704,7 +704,7 @@ export default function PodcastEpisodeClient({ slug, initialEpisode, initialEpis
                 <p style={{ fontSize: "12px", color: "rgba(255,255,255,.55)", marginBottom: "1rem", lineHeight: 1.55 }}>
                   Book a free consultation to discuss your practice&apos;s insurance situation.
                 </p>
-                <Link href="/contact/" className="btn-teal" style={{ width: "100%", justifyContent: "center", fontSize: "13px" }}>
+                <Link href="/msm/" className="btn-teal" style={{ width: "100%", justifyContent: "center", fontSize: "13px" }}>
                   Book Free Consultation
                 </Link>
               </div>

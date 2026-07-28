@@ -3,10 +3,12 @@ import Link from "next/link";
 import ReactDOM from "react-dom";
 import CounterAnimation from "@/components/CounterAnimation";
 import NewsletterForm from "@/components/NewsletterForm";
-import { getUpcomingEvents } from "@/lib/sheets";
+import { getUpcomingEvents, getPodcasts, podcastSlug, totalEpisodeCount } from "@/lib/sheets";
 
 export const metadata: Metadata = {
-  title: "Dental Insurance Strategy for Dental Practices",
+  // title.template in the root layout does NOT apply to its own segment,
+  // so the brand suffix must be spelled out here explicitly.
+  title: { absolute: "Dental Insurance Strategy for Dental Practices | Insurance Untangled" },
   description:
     "Insurance Untangled cuts through the confusion of dental PPOs — helping dentists negotiate better reimbursements and build a practice that works with insurance.",
   alternates: { canonical: "https://www.insuranceuntangled.com/" },
@@ -26,6 +28,13 @@ export default async function Home() {
   const events = await getUpcomingEvents();
   const today = new Date().toISOString().split("T")[0];
   const nextEvent = events.find((e) => e.date_iso >= today);
+
+  // Live episode data — fetched fresh every build so the count and the
+  // "latest episodes" rail never go stale (they were previously hardcoded
+  // and drifted behind the sheet).
+  const podcasts = await getPodcasts();
+  const epCount = totalEpisodeCount(podcasts);
+  const latestEpisodes = podcasts.slice(0, 4);
 
   // Preload the LCP hero image — homepage only.
   // Replaces the global <link rel="preload"> that used to live in layout.tsx
@@ -53,7 +62,7 @@ export default async function Home() {
             <div className="h2-hero-actions reveal reveal-d2">
               <Link href="/msm/" className="h2-btn-primary">Book Free Marketing Consult</Link>
               <Link href="/podcast/" className="h2-btn-ghost-hero">
-                Browse 137 episodes
+                Browse {epCount}{" "}episodes
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
             </div>
@@ -65,7 +74,7 @@ export default async function Home() {
               <img src="/images/hero-yarn.png" alt="Dental insurance complexity untangled" className="h2-yarn-img" loading="eager" fetchPriority="high" width={480} height={520} />
               <div className="h2-yarn-stats">
                 <div className="h2-img-stat">
-                  <div className="h2-img-stat-val">137<sup>+</sup></div>
+                  <div className="h2-img-stat-val">{epCount}<sup>+</sup></div>
                   <div className="h2-img-stat-lbl">Episodes</div>
                 </div>
                 <div className="h2-img-stat-div"></div>
@@ -177,7 +186,7 @@ export default async function Home() {
               </div>
               <div className="h2-offer-body">
                 <div className="h2-offer-title">Podcast</div>
-                <p className="h2-offer-desc">137 expert conversations that decode PPO strategy, fee negotiation, claim management, and the business of dentistry. New episodes weekly &mdash; free forever.</p>
+                <p className="h2-offer-desc">{epCount}{" "}expert conversations that decode PPO strategy, fee negotiation, claim management, and the business of dentistry. New episodes weekly &mdash; free forever.</p>
                 <div className="h2-offer-link">Listen on Apple &amp; Spotify &rarr;</div>
               </div>
             </Link>
@@ -298,34 +307,20 @@ export default async function Home() {
                   YouTube
                 </a>
               </div>
-              <Link href="/podcast/" className="h2-btn-outline" style={{ marginTop: "1.75rem" }}>View all 137 episodes &rarr;</Link>
+              <Link href="/podcast/" className="h2-btn-outline" style={{ marginTop: "1.75rem" }}>View all {epCount}{" "}episodes &rarr;</Link>
             </div>
+            {/* Latest episodes — rendered from the live sheet at build time so
+                this rail never goes stale, and each card deep-links to its
+                episode page (homepage → newest episodes = fast discovery
+                by crawlers + real navigation for visitors). */}
             <div className="h2-ep-stack">
-              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
-                <span className="h2-ep-num">137</span>
-                <span className="h2-ep-title">Why Doing &quot;More&quot; Isn&apos;t the Answer &mdash; Doing the Right Things Is!</span>
-                <span className="h2-ep-tag">Marketing</span>
-              </Link>
-              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
-                <span className="h2-ep-num">136</span>
-                <span className="h2-ep-title">Are Out-of-Network Benefits Getting Better or Worse?</span>
-                <span className="h2-ep-tag">Negotiating</span>
-              </Link>
-              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
-                <span className="h2-ep-num">135</span>
-                <span className="h2-ep-title">Why Your Schedule Controls You and How to Change That</span>
-                <span className="h2-ep-tag">Marketing</span>
-              </Link>
-              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
-                <span className="h2-ep-num">134</span>
-                <span className="h2-ep-title">What Google Really Wants From Your Dental Website in 2026</span>
-                <span className="h2-ep-tag">Marketing</span>
-              </Link>
-              <Link href="/podcast/" className="h2-ep" role="button" tabIndex={0}>
-                <span className="h2-ep-num">133</span>
-                <span className="h2-ep-title">Creating a PPO Exit Strategy for Your Dental Practice</span>
-                <span className="h2-ep-tag">Negotiating</span>
-              </Link>
+              {latestEpisodes.map((ep) => (
+                <Link key={ep.episode} href={`/podcast/${podcastSlug(ep)}/`} className="h2-ep" role="button" tabIndex={0}>
+                  <span className="h2-ep-num">{ep.episode}</span>
+                  <span className="h2-ep-title">{ep.title}</span>
+                  <span className="h2-ep-tag">{ep.category || "Episode"}</span>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
@@ -513,7 +508,7 @@ export default async function Home() {
             {[
               { stat: "20", unit: "yr", label: "PPO Negotiation Expertise" },
               { stat: "$3B", unit: "+", label: "Recovered for Clients" },
-              { stat: "137", unit: "+", label: "Podcast Episodes" },
+              { stat: String(epCount), unit: "+", label: "Podcast Episodes" },
               { stat: "200", unit: "+", label: "Practices Served" },
               { stat: "16", unit: "+", label: "CE-Eligible Webinars" },
             ].map((item, i, arr) => (

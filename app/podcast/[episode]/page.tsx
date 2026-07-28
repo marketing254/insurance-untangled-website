@@ -184,11 +184,25 @@ export default async function EpisodePage({ params }: Props) {
 
   const initialTranscriptText = await fetchTranscriptText(ep.transcript_url);
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.insuranceuntangled.com/" },
+      { "@type": "ListItem", position: 2, name: "Podcast", item: "https://www.insuranceuntangled.com/podcast/" },
+      { "@type": "ListItem", position: 3, name: `Ep ${ep.episode}: ${ep.title}`, item: `https://www.insuranceuntangled.com/podcast/${canonicalSlug}/` },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(episodeSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <PodcastEpisodeClient
         slug={slug}

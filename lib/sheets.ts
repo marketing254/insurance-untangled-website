@@ -228,6 +228,13 @@ export async function getBlogs(): Promise<BlogPost[]> {
 
 // ── Utility: Generate slug from episode ──────────────────────────────────────
 
+// Total published episodes = the highest episode number in the sheet.
+// The sheet only carries recent rows (the back-catalog was trimmed), so
+// counting rows would undercount badly (26 rows vs. 142 published).
+export function totalEpisodeCount(episodes: Podcast[]): number {
+  return episodes.reduce((max, ep) => Math.max(max, parseInt(ep.episode) || 0), 0);
+}
+
 export function podcastSlug(episode: Podcast): string {
   const ep = episode.episode.replace(/\D/g, '');
   const titleSlug = episode.title
