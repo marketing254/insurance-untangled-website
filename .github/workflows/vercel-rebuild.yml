@@ -1,0 +1,32 @@
+# Triggers a fresh Vercel build every 2 hours so the site picks up Google
+# Sheets changes (new episodes, webinars, partners) without a git push —
+# the same job deploy.yml's cron does for GitHub Pages.
+#
+# INERT until the VERCEL_DEPLOY_HOOK secret is set:
+#   1. Vercel dashboard → Project → Settings → Git → Deploy Hooks →
+#      Create Hook (name: "sheet-refresh", branch: main) → copy URL
+#   2. GitHub repo → Settings → Secrets and variables → Actions →
+#      New repository secret: VERCEL_DEPLOY_HOOK = <that URL>
+#
+# After DNS cutover to Vercel is confirmed, the GitHub Pages workflow
+# (deploy.yml) can be deleted and this becomes the only scheduled job.
+name: Trigger Vercel rebuild
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK secret not set — skipping (workflow is inert until Vercel is configured)."
+            exit 0
+          fi
+          curl -sS -X POST "$HOOK" -o /dev/null -w "Vercel deploy hook called: HTTP %{http_code}\n"

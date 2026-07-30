@@ -27,7 +27,7 @@ export default function Footer() {
               <li><Link href="/podcast/">Podcast Episodes</Link></li>
               <li><Link href="/events/">Webinar Replays</Link></li>
               <li><Link href="/partners/">Partners</Link></li>
-              <li><Link href="/events/">Live Events</Link></li>
+              <li><Link href="/glossary/">Insurance Glossary</Link></li>
               <li><Link href="/ppo-scorecard/" style={{ color: "#0EA5A0" }}>PPO Readiness Scorecard</Link></li>
             </ul>
           </div>
