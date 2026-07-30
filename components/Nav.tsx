@@ -15,6 +15,10 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/resources/", label: "Resources", optHide: true },
   { href: "/reviews/", label: "Reviews", optHide: true },
   { href: "/be-a-guest/", label: "Be a Guest", optHide: true, accent: true },
+  // Per the DMN rollout addendum: "Member Network" must be the LAST nav item,
+  // styled as a plain link identical to the others — never a button, never a
+  // different color.
+  { href: "/community/", label: "Member Network" },
 ];
 
 type NavItem = {

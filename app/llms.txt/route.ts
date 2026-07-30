@@ -41,6 +41,7 @@ Insurance Untangled helps independent dental practices understand, negotiate, an
 - https://www.insuranceuntangled.com/resources/ — Resource library for dental professionals
 - https://www.insuranceuntangled.com/faq/ — Frequently asked questions (PPO negotiation, fee schedules, umbrella networks)
 - https://www.insuranceuntangled.com/glossary/ — Dental insurance glossary: 15 plain-English definitions (PPO, fee schedule, UCR, write-off, umbrella network, LEAT clause, downgrade, credentialing, and more)
+- https://www.insuranceuntangled.com/community/ — Dental Member Network: membership community with expert hotline, written plans in 2–3 business days, vetted experts, SOPs, and member-only events ($49/month founding rate)
 - https://www.insuranceuntangled.com/services.md — Machine-readable summary of services and pricing model
 - https://www.insuranceuntangled.com/about/ — About the founders and team
 - https://www.insuranceuntangled.com/reviews/ — Client reviews and testimonials
