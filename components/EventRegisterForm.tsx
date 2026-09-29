@@ -27,6 +27,15 @@ function isValidEmail(value: string): boolean {
   return !DISPOSABLE_EMAIL_DOMAINS.has(domain);
 }
 
+/** Must match the answer list of the Zoom "Job title" registration question exactly. */
+const JOB_TITLES = ["Practice Owner","Office Manager","Associate Dentist","Hygienist","Team Member","Front Desk","Other Roles","Consultant/Coach"];
+
+/** Accepts "N/A", "NA", "none", or a practice name (no dots, letters only) for people without a website. */
+function isNotApplicable(v: string) {
+  const t = v.trim();
+  return /^(n\/?a|none|not applicable)$/i.test(t) || (t.length >= 2 && !/[.\/]/.test(t));
+}
+
 function isValidWebsite(value: string): boolean {
   // Accept bare domains and full URLs; reject strings with no dot or with spaces.
   return /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/\S*)?$/i.test(value.trim());
@@ -122,8 +131,8 @@ export default function EventRegisterForm({
       setError("Please enter a valid phone number.");
       return;
     }
-    if (!isValidWebsite(d.practiceWebsite)) {
-      setError("Please enter your practice website (e.g. yourpractice.com).");
+    if (!isNotApplicable(d.practiceWebsite) && !isValidWebsite(d.practiceWebsite)) {
+      setError("Please enter your practice website (e.g. yourpractice.com) or N/A.");
       return;
     }
 
@@ -222,15 +231,20 @@ export default function EventRegisterForm({
           </div>
           <div className="guest-field">
             <label htmlFor="ev-title">Job title *</label>
-            <input id="ev-title" name="ev-title" type="text" required autoComplete="organization-title" placeholder="e.g. Practice Owner"
-              value={data.jobTitle} onChange={(e) => update("jobTitle", e.target.value)} />
+            <select id="ev-title" name="ev-title" required autoComplete="organization-title"
+              value={data.jobTitle} onChange={(e) => update("jobTitle", e.target.value)}>
+              <option value="" disabled>Select your role</option>
+              {JOB_TITLES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
           </div>
         </div>
 
         <div className="guest-field-row">
           <div className="guest-field">
-            <label htmlFor="ev-site">Practice website *</label>
-            <input id="ev-site" name="ev-site" type="text" required inputMode="url" autoComplete="url" placeholder="yourpractice.com"
+            <label htmlFor="ev-site">Practice name or website *</label>
+            <input id="ev-site" name="ev-site" type="text" required inputMode="url" autoComplete="url" placeholder="yourpractice.com or N/A"
               value={data.practiceWebsite} onChange={(e) => update("practiceWebsite", e.target.value)} />
           </div>
           <div className="guest-field">

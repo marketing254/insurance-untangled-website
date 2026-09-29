@@ -64,3 +64,4 @@ existingscript.gs
 *.xlsx
 # raw event headshots (web copies live in public/images/events/)
 /Events/
+data/iu-zoom-questions-check-n8n.json
