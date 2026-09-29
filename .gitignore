@@ -57,3 +57,10 @@ ACTION-PLAN.md
 data/iu-form-handler.gs
 Insurance Untangled — Website Data - PPO Scorecard.csv
 Insurance Untangled — Website Data - ppo_scorecard.csv
+# Zoom registration automation — IDs / webhook URLs stay local, deployed manually
+data/iu-zoom-registrations.gs
+data/iu-zoom-registrations-n8n.json
+existingscript.gs
+*.xlsx
+# raw event headshots (web copies live in public/images/events/)
+/Events/
