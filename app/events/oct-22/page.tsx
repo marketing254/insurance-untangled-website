@@ -12,10 +12,10 @@ const EVENT_KEY = "event_2026_10_22";
 const START_ISO = "2026-10-23T00:00:00Z";
 const END_ISO = "2026-10-23T01:00:00Z";
 const URL = "https://www.insuranceuntangled.com/events/oct-22/";
-const TITLE = "The Fee Schedule Reset — Renegotiating PPO Contracts Before 2027 Locks You In";
-const SHORT_TITLE = "The Fee Schedule Reset";
+const TITLE = "The Fee Schedule Reset: Which PPO Contracts Are Still Worth Keeping Heading Into 2027?";
+const SHORT_TITLE = "The Fee Schedule Reset: Which PPO Contracts Are Still Worth Keeping Heading Into 2027?";
 const DESCRIPTION =
-  "Free live Insurance Untangled panel, October 22, 2026 at 8 PM ET: how dental practices can evaluate, renegotiate, and make smarter decisions around PPO contracts before 2027 renewals are finalized. 1 CE credit.";
+  "Join Insurance Untangled for a focused discussion on how dental practices can evaluate, renegotiate, and make smarter decisions around PPO contracts before 2027 renewals are finalized. This discussion will explore where real negotiation opportunities exist within fee schedules, what data strengthens a practice's position with insurance carriers, when renegotiating makes sense, and how teams can prepare strategically to protect profitability while maintaining sustainable growth.";
 
 const SPEAKERS = [
   {
@@ -42,11 +42,12 @@ const SPEAKERS = [
 ];
 
 const TOPICS = [
-  "Where real negotiation opportunities exist in PPO fee schedules and how practices can identify them.",
-  "What data and practice metrics strengthen a dentist's position during insurance negotiations.",
-  "When practices should renegotiate existing contracts versus when it may make sense to drop a plan.",
-  "How teams can prepare for renewal notices and respond with a strategic approach.",
-  "Systems practices can build to protect profitability and avoid costly insurance mistakes.",
+  "Which practice numbers reveal that a PPO relationship is hurting margin, even when it brings in patients?",
+  "What should an owner prepare before requesting a fee schedule review, and which requests have produced a useful response?",
+  "When a carrier declines an increase, what options should the practice assess before making its next move?",
+  "How can an owner weigh reimbursement against patient retention, cash flow, and the practice's ability to attract patients beyond the network?",
+  "What should the front office do with contract notices, deadlines, and revised fee schedules so decisions do not get missed?",
+  "What did a practice learn after renegotiating or leaving a plan that it wishes it had known beforehand?",
 ];
 
 const AUDIENCE = [
@@ -58,7 +59,7 @@ const AUDIENCE = [
 ];
 
 export const metadata: Metadata = {
-  title: { absolute: `${SHORT_TITLE} — Live Panel, Oct 22 | Insurance Untangled` },
+  title: { absolute: `${SHORT_TITLE} — Live Webinar, Oct 22 | Insurance Untangled` },
   description: DESCRIPTION,
   alternates: { canonical: URL },
   openGraph: {
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
     siteName: "Insurance Untangled",
     title: TITLE,
     description:
-      "Live virtual panel + moderated Q&A · October 22, 2026 · 8:00 PM ET · 1 CE credit. Free to attend, replay sent to every registrant.",
+      "Live virtual webinar · October 22, 2026 · 8:00 PM ET · 1 CE credit. Free to attend, replay sent to every registrant.",
     url: URL,
     locale: "en_US",
     publishedTime: START_ISO,
@@ -75,8 +76,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     site: "@InsuranceUntangled",
-    title: `${SHORT_TITLE} — Live Panel, Oct 22`,
-    description: "Renegotiating PPO contracts before 2027 locks you in. Free, 1 CE credit, 8 PM ET on Zoom.",
+    title: `${SHORT_TITLE} — Live Webinar, Oct 22`,
+    description: "Which PPO contracts are still worth keeping heading into 2027? Free, 1 CE credit, 8 PM ET on Zoom.",
   },
 };
 
@@ -134,17 +135,21 @@ export default function Oct22EventPage() {
               </nav>
 
               <div className="page-eyebrow" style={{ color: "#0EA5A0" }}>
-                Insurance Untangled Live &middot; Free panel &middot; 1 CE credit
+                Insurance Untangled Live Webinar &middot; Free &middot; 1 CE credit
               </div>
 
               <h1 className="evr-title">
-                The Fee Schedule Reset &mdash; <em>Renegotiating PPO Contracts</em> Before 2027 Locks You In
+                {TITLE}
               </h1>
 
               <p className="evr-lede">
-                A focused live discussion on how dental practices can evaluate, renegotiate, and make smarter
-                decisions around PPO contracts before 2027 renewals are finalized &mdash; where the real leverage
-                is, what data strengthens your position, and when it&rsquo;s time to walk away from a plan.
+                Join Insurance Untangled for a focused discussion on how dental practices can evaluate, renegotiate,
+                and make smarter decisions around PPO contracts before 2027 renewals are finalized.
+              </p>
+              <p>
+                This discussion will explore where real negotiation opportunities exist within fee schedules, what data
+                strengthens a practice&rsquo;s position with insurance carriers, when renegotiating makes sense, and how
+                teams can prepare strategically to protect profitability while maintaining sustainable growth.
               </p>
 
               <dl className="evr-facts">
@@ -195,7 +200,7 @@ export default function Oct22EventPage() {
         <div className="container">
           <div className="sec-eyebrow">What we&rsquo;ll cover</div>
           <h2 className="sec-title">Key discussion topics</h2>
-          <p className="sec-sub">Five questions the panel will answer with real numbers, real contracts, and real renewal timelines.</p>
+          <p className="sec-sub">Six practical questions about fee schedule reviews, carrier negotiations, and 2027 renewals.</p>
           <ol className="evr-topics">
             {TOPICS.map((t, i) => (
               <li key={i}>
@@ -215,15 +220,13 @@ export default function Oct22EventPage() {
               <div className="sec-eyebrow">About this session</div>
               <h2 className="sec-title">Renewals are coming. Your leverage is now.</h2>
               <p>
-                2027 renewal notices are already in motion, and once a fee schedule is accepted it is locked for years. Join
-                Insurance Untangled for a focused discussion on how dental practices can evaluate, renegotiate, and make
-                smarter decisions around PPO contracts before those renewals are finalized.
+                Join Insurance Untangled for a focused discussion on how dental practices can evaluate, renegotiate,
+                and make smarter decisions around PPO contracts before 2027 renewals are finalized.
               </p>
               <p>
-                The panel will explore where real negotiation opportunities exist within fee schedules, what data
-                strengthens a practice&rsquo;s position with insurance carriers, when renegotiating makes sense versus
-                dropping a plan, and how teams can prepare strategically to protect profitability while maintaining
-                sustainable growth. Bring your questions &mdash; the second half is moderated Q&amp;A.
+                We&rsquo;ll explore where real negotiation opportunities exist within fee schedules, what data strengthens
+                a practice&rsquo;s position with insurance carriers, when renegotiating makes sense, and how teams can
+                prepare strategically to protect profitability while maintaining sustainable growth.
               </p>
             </div>
 
@@ -273,8 +276,8 @@ export default function Oct22EventPage() {
       {/* ── Bottom CTA ───────────────────────────────────────────── */}
       <section className="evr-cta">
         <div className="container">
-          <h2>Don&rsquo;t sign the 2027 renewal blind.</h2>
-          <p>October 22 &middot; 8:00 PM ET &middot; Free &middot; 1 CE credit &middot; Replay sent to every registrant.</p>
+          <h2>Make smarter PPO decisions before 2027.</h2>
+          <p>Walk away with a clearer understanding of your PPO contracts, practical negotiation strategies, and the confidence to make better decisions before another year is locked in. Reserve your free spot today!</p>
           <a href="#register" className="btn-primary btn-primary-lg">
             Reserve my seat &rarr;
           </a>

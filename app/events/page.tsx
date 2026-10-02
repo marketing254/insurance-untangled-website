@@ -5,11 +5,11 @@ import { UpcomingEvents, WebinarReplays } from "@/components/EventsList";
 export const metadata: Metadata = {
   title: { absolute: "Dental Insurance Webinars & CE Events | Insurance Untangled" },
   description:
-    "Live answers to the questions your insurance rep won't answer. Free CE webinars, expert panels, and full replay archive for dental professionals.",
+    "Join Insurance Untangled for free live dental insurance webinars and CE events. Get practical guidance on PPO contracts, practice profitability, and more, plus access the full replay archive.",
   alternates: { canonical: "https://www.insuranceuntangled.com/events/" },
   openGraph: {
     title: "Events & Webinar Replays | Insurance Untangled",
-    description: "Free live CE webinars and expert panels for dentists. Watch replays anytime.",
+    description: "Free live dental insurance webinars and CE events, including practical guidance on PPO contracts and practice profitability. Watch replays anytime.",
     url: "https://www.insuranceuntangled.com/events/",
   },
 };
