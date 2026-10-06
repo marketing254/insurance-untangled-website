@@ -18,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   // Per the DMN rollout addendum: "Member Network" must be the LAST nav item,
   // styled as a plain link identical to the others — never a button, never a
   // different color.
-  { href: "/community/", label: "Member Network" },
+  { href: "https://www.dentalmembernetwork.com/", label: "Member Network", external: true },
 ];
 
 type NavItem = {
@@ -27,6 +27,7 @@ type NavItem = {
   optHide?: boolean;
   accent?: boolean;
   cta?: boolean;
+  external?: boolean;
 };
 
 export default function Nav() {
@@ -57,14 +58,20 @@ export default function Nav() {
                 : undefined;
               return (
                 <li key={item.href} className={item.optHide ? "opt-hide" : undefined}>
-                  <Link
-                    href={item.href}
-                    className={isActive && !item.cta ? "active" : undefined}
-                    aria-current={isActive ? "page" : undefined}
-                    style={linkStyle}
-                  >
-                    {item.label}
-                  </Link>
+                  {item.external ? (
+                    <a href={item.href} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={isActive && !item.cta ? "active" : undefined}
+                      aria-current={isActive ? "page" : undefined}
+                      style={linkStyle}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               );
             })}
@@ -126,14 +133,20 @@ export default function Nav() {
                   : undefined;
                 return (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={isActive ? "active" : undefined}
-                      style={mobileStyle}
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
+                    {item.external ? (
+                      <a href={item.href} target="_blank" rel="noopener noreferrer" style={mobileStyle} onClick={() => setMobileOpen(false)}>
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className={isActive ? "active" : undefined}
+                        style={mobileStyle}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    )}
                   </li>
                 );
               })}
